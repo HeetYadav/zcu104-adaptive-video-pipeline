@@ -427,13 +427,11 @@ def compositor_thread():
                 kbps = 0.0
                 
             targets = len(cached_boxes)
-            vx_str  = " (VCU HW)"
             
-            print(
-                f"[Telemetry] frame={frame_counter:6d} | "
-                f"targets={targets}{vx_str} | "
-                f"TRUE HW BW: {kbps:6.1f} kbps ({fps:.1f} FPS)"
-            )
+            # Match pipeline_hw_1.py format exactly:
+            # [Telemetry] frame=   123 | targets=2 | BW:  500.0 kbps ( 8.0 FPS)
+            # Since hardware has no KB/frame metric, we use N/A to keep columns aligned.
+            print(f"    [Telemetry] frame={frame_counter:6d} | targets={targets} |   N/A KB/frame | BW: {kbps:6.1f} kbps ({fps:4.1f} FPS)")
             
         # Ensure strict 30 FPS metronome pacing
         elapsed_loop = time.time() - loop_start

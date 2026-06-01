@@ -300,7 +300,8 @@ def detector_thread():
 def compositor_thread():
     global _output_jpg
     frame_count  = 0
-    bw_report_every = 30   # print BW report every N frames
+    last_time = time.time()
+
 
     last_faces_key = None
     cached_boxes   = []
@@ -365,9 +366,18 @@ def compositor_thread():
             with _output_lock:
                 _output_jpg = jpg_bytes
 
-        # Print bandwidth report every N frames
-        if frame_count % bw_report_every == 0:
-            print_bw_report()
+        # Bandwidth telemetry every 30 frames
+        if frame_count % 30 == 0:
+            now = time.time()
+            elapsed = now - last_time
+            fps = 30.0 / elapsed if elapsed > 0 else 0
+            last_time = now
+            
+            kb      = len(jpg_bytes) / 1024.0 if ok else 0
+            kbps    = kb * 8 * fps  # Kilobits per second
+            
+            targets = len(cached_boxes)
+            print(f"    [Telemetry] frame={frame_count:6d} | targets={targets} | {kb:5.1f} KB/frame | BW: {kbps:6.1f} kbps ({fps:4.1f} FPS)")
 
 
 # ═══════════════════════════════════════════════════════════════════

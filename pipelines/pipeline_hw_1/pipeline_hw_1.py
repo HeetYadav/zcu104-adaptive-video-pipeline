@@ -368,15 +368,7 @@ def compositor_thread():
             kbps    = kb * 8 * fps  # Kilobits per second
             
             targets = len(cached_boxes)
-            vx_str  = ""
-            if cached_boxes and trackers[0]._prev_cx is not None:
-                vx, vy = trackers[0].predict_next()
-                vx_str = f" | vx={vx:+.1f} vy={vy:+.1f}"
-            print(
-                f"[Telemetry] frame={frame_counter:6d} | "
-                f"targets={targets}{vx_str} | "
-                f"{kb:.1f} KB/frame | BW: {kbps:.1f} kbps ({fps:.1f} FPS)"
-            )
+            print(f"    [Telemetry] frame={frame_counter:6d} | targets={targets} | {kb:5.1f} KB/frame | BW: {kbps:6.1f} kbps ({fps:4.1f} FPS)")
 
 
 # ═══════════════════════════════════════════════════════════════════
