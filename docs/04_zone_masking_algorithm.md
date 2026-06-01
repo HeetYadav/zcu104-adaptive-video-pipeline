@@ -131,7 +131,7 @@ flowchart TD
 
 ## Multi-Target Merging
 
-![Multi-Target Detection in VLC](../assets/photos/vlc_detection_multi.png)
+![Multi-Target Detection in VLC](../assets/photos/vlc_detection_zones.png)
 
 When multiple persons are detected simultaneously, zones from all targets are merged onto a single canvas.
 
