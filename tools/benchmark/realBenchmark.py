@@ -66,19 +66,9 @@ def benchmark_pipeline(script_name, duration=15):
                     kbps_list.append(bw)
                     fps_list.append(fps)
                     
-    # 5. Stop the pipeline cleanly so DPU memory is freed!
+    # 5. Stop the pipeline
     print(f"\n[Automated Tester] Stopping {script_name}...")
-    # Send SIGINT (Ctrl+C) so the Python script can catch KeyboardInterrupt and clean up
-    os.killpg(os.getpgid(proc.pid), signal.SIGINT)
-    try:
-        proc.wait(timeout=4)
-    except subprocess.TimeoutExpired:
-        print("[Automated Tester] Pipeline didn't stop, forcing SIGKILL...")
-        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-        proc.wait()
-    
-    # Give the DPU driver a moment to release CMA memory and /tmp/vart_device_0
-    time.sleep(2)
+    os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
     
     avg_kbps = sum(kbps_list) / len(kbps_list) if kbps_list else 0.0
     avg_fps = sum(fps_list) / len(fps_list) if fps_list else 0.0

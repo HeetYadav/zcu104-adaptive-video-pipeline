@@ -11,11 +11,8 @@ from gi.repository import Gst, GObject, GstVideo, GLib
 Gst.init(None)
 
 print("Loading OpenCV CPU Face Detect Model...")
-# Use cv2.data.haarcascades to automatically locate the XML file installed with OpenCV
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-if face_cascade.empty():
-    print("[ERROR] Failed to load Haar cascade!")
-    sys.exit(1)
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
 # Phone Stream URL
 PHONE_URL = "http://192.168.2.141:8080/video"
 
