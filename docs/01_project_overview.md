@@ -61,28 +61,20 @@ Furthermore, the ZCU104's **DPU** (Deep Learning Processing Unit) is a dedicated
 
 ## Project Evolution
 
-The project was developed in three iterative phases, each adding a layer of hardware acceleration:
+The project is organized around two key pipelines, representing the baseline and the final hardware-accelerated solution:
 
-### Phase 1 — `pipeline.py` (Software Baseline)
-
-- **Inference:** OpenCV DNN module (CPU-based)
-- **Encoding:** MJPEG (CPU-based, no compression standard)
-- **Output:** MJPEG HTTP stream
-- **Bandwidth:** ~8,000 kbps (scene dependent)
-- **CPU load:** Very high (inference + encoding compete for CPU cycles)
-
-### Phase 2 — `pipeline_hw_1.py` (DPU Inference Added)
+### Baseline — `pipeline_hw_1.py` (DPU Inference)
 
 - **Inference:** YOLOv4 on the DPU (FPGA fabric) via Vitis AI Runtime (`vart`)
-- **Encoding:** Still MJPEG (CPU-based)
+- **Encoding:** MJPEG (CPU-based)
 - **Output:** MJPEG HTTP stream on port 5000
-- **Bandwidth:** ~6,000 kbps (MJPEG is still uncompressed)
-- **CPU load:** Reduced — CPU now only handles compositor and HTTP server
-- **Key achievement:** Proved the DPU can run YOLOv4 reliably and feed bounding boxes to the compositor in real-time
+- **Bandwidth:** ~6,000–8,000 kbps (MJPEG is uncompressed)
+- **CPU load:** Moderate — CPU handles the compositor and HTTP server
+- **Key achievement:** Proves the DPU can run YOLOv4 reliably and feed bounding boxes to the compositor in real-time
 
-### Phase 3 — `pipeline_hw.py` (Full Hardware Acceleration)
+### Final — `pipeline_hw.py` (Full Hardware Acceleration)
 
-- **Inference:** YOLOv4 on DPU (unchanged from Phase 2)
+- **Inference:** YOLOv4 on DPU (unchanged from Baseline)
 - **Encoding:** VCU hardware H.264 encoder (`omxh264enc`) via GStreamer — runs on dedicated silicon in the FPGA PL, zero CPU cycles
 - **Visualization:** MJPEG stream (smooth, immediate, parallel to VCU encoding)
 - **Telemetry:** VCU H.264 bandwidth calculated from active pixel area ratio
@@ -106,7 +98,7 @@ The project was developed in three iterative phases, each adding a layer of hard
 | Typical bandwidth reduction | **~85–95%** (active scene) |
 | Inference hardware | DPU B4096 on FPGA fabric |
 | Encoding hardware | VCU H.264 encoder on FPGA PL |
-| CPU utilization during Phase 3 | Low (orchestration only) |
+| CPU utilization during Final HW | Low (orchestration only) |
 | Detection model | YOLOv4 (leaky SPP, quantized to INT8) |
 | Target class | Person |
 | Inference input resolution | 416×416 px |

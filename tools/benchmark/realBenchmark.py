@@ -145,9 +145,6 @@ if __name__ == "__main__":
     kill_desktop_gui()
 
     # Step 2: Run pipelines
-    # 0. Pure Software Pipeline (OpenCV + ResNet)
-    kbps_sw, fps_sw, oom_sw = benchmark_pipeline("pipeline.py", duration=15)
-    
     # 1. DPU + MJPEG Pipeline
     kbps_1,  fps_1,  oom_1  = benchmark_pipeline("pipeline_hw_1.py", duration=15)
     
@@ -158,17 +155,6 @@ if __name__ == "__main__":
     print("\n\n=======================================================")
     print("                 FINAL PIPELINE REPORT                 ")
     print("=======================================================")
-
-    print("\n[0] Pure Software Pipeline (pipeline_sw/pipeline.py)")
-    if oom_sw:
-        print("    *** FAILED — OOM killed ***")
-    elif kbps_sw == 0:
-        print("    Average Bandwidth:      0.0 kbps")
-        print("    Average Framerate:      0.0 FPS")
-        print("    (No [Telemetry] lines seen — check phone connection)")
-    else:
-        print(f"    Average Bandwidth: {kbps_sw:8.1f} kbps")
-        print(f"    Average Framerate: {fps_sw:8.1f} FPS")
 
     print("\n[1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)")
     if oom_1:
@@ -198,12 +184,7 @@ if __name__ == "__main__":
         print(f"    Bandwidth Savings (DPU+MJPEG vs DPU+VCU):")
         print(f"                       {ratio:.1f}x LESS bandwidth than MJPEG!")
         
-    if fps_sw > 0 and fps_hw > 0:
-        fps_ratio = fps_hw / fps_sw
-        print(f"    Framerate Boost (Pure SW vs DPU+VCU):")
-        print(f"                       {fps_ratio:.1f}x HIGHER framerate!")
-        
-    if oom_sw or oom_1 or oom_hw:
+    if oom_1 or oom_hw:
         print("\n    Note: One or more pipelines were OOM-killed.")
 
     print("=======================================================\n")

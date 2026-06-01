@@ -45,7 +45,7 @@ python3 tools/benchmark/realBenchmark.py
                  FINAL PIPELINE REPORT
 =======================================================
 
-[1] Software MJPEG Pipeline (pipeline_hw_1.py)
+[1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)
     Average Bandwidth:   6210.4 kbps
     Average Framerate:      7.8 FPS
 
@@ -64,11 +64,8 @@ python3 tools/benchmark/realBenchmark.py
 `realBenchmark.py` reads `[Telemetry]` lines from each pipeline's stdout using regex:
 
 ```python
-# For pipeline_hw_1.py (MJPEG):
-pattern = r"BW:\s*([\d.]+)\s*kbps\s*\(([\d.]+)\s*FPS\)"
-
-# For pipeline_hw.py (VCU H.264):
-pattern = r"TRUE HW BW:\s*([\d.]+)\s*kbps\s*\(([\d.]+)\s*FPS\)"
+# For all pipelines:
+pattern = r"BW:\s*([\d.]+)\s*kbps"
 ```
 
 Readings below 10 kbps (pipeline initialization artifacts) are discarded. The final average is taken over all valid readings within the 15-second window.

@@ -68,7 +68,7 @@ def benchmark_pipeline(script_name, duration=15):
                  FINAL PIPELINE REPORT
 =======================================================
 
-[1] Software MJPEG Pipeline (pipeline_hw_1.py)
+[1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)
     Average Bandwidth: _______ kbps
     Average Framerate:    _____ FPS
 
@@ -146,27 +146,26 @@ Each pipeline emits one `[Telemetry]` line every 30 processed frames:
 
 **pipeline_hw_1.py (MJPEG):**
 ```
-[Telemetry] frame=    30 | targets=2 | vx=+62.6 vy=-9.3 | 129.7 KB/frame | BW: 8024.1 kbps (7.7 FPS)
+[Telemetry] frame=    30 | targets=2 | 129.7 KB/frame | BW: 8024.1 kbps (7.7 FPS)
 ```
 
 | Field | Meaning |
 |-------|---------|
 | `frame=30` | 30th frame processed since startup |
 | `targets=2` | 2 persons currently in the detection result |
-| `vx=+62.6 vy=-9.3` | Velocity of target 0 in pixels/frame |
 | `129.7 KB/frame` | Average JPEG size in KB for this 30-frame window |
 | `BW: 8024.1 kbps` | Bandwidth = KB/frame × FPS × 8 |
 | `(7.7 FPS)` | Actual compositor frame rate for this window |
 
 **pipeline_hw.py (VCU H.264):**
 ```
-[Telemetry] frame=    30 | targets=2 (VCU HW) | TRUE HW BW:  258.3 kbps (9.2 FPS)
+[Telemetry] frame=    30 | targets=2 |   N/A KB/frame | BW:  258.3 kbps (9.2 FPS)
 ```
 
 | Field | Meaning |
 |-------|---------|
-| `targets=2 (VCU HW)` | 2 persons, encoded by VCU hardware |
-| `TRUE HW BW: 258.3 kbps` | Modelled VBR bandwidth based on active pixel ratio |
+| `targets=2` | 2 persons, encoded by VCU hardware |
+| `BW: 258.3 kbps` | Modelled VBR bandwidth based on active pixel ratio |
 | `(9.2 FPS)` | Compositor frame rate |
 
 ---

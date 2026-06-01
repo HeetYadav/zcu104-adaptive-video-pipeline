@@ -4,10 +4,10 @@
 
 # `telemetry.py` — Per-Zone JPEG Byte Measurement
 
-A diagnostic module used in the Phase 2 software pipeline (`pipeline_sw`) to independently measure the JPEG-compressed byte size of each zone. Quantifies the compression benefit of Zone 2 downsampling and Zone 3 blacking.
+A diagnostic module used to independently measure the JPEG-compressed byte size of each zone. Quantifies the compression benefit of Zone 2 downsampling and Zone 3 blacking.
 
 > [!NOTE]
-> This module is **not used** in the Phase 3 pipelines (`pipeline_hw.py`, `pipeline_hw_1.py`). Phase 3 uses VCU H.264 VBR telemetry instead. `telemetry.py` is kept as a diagnostic and educational tool.
+> This module is **not used** in the final pipelines (`pipeline_hw.py`, `pipeline_hw_1.py`). They use VCU H.264 VBR telemetry instead. `telemetry.py` is kept as a diagnostic and educational tool.
 
 ## What It Measures
 
@@ -84,5 +84,4 @@ if adapted_boxes and ring_boxes:
 
 ## See Also
 
-- [`tools/benchmark/`](../../tools/benchmark/) — the Phase 3 automated benchmark (supersedes this module for final measurements)
-- [Pipeline SW](../../pipelines/pipeline_sw/) — the pipeline that uses this module
+- [`tools/benchmark/`](../../tools/benchmark/) — the automated benchmark (supersedes this module for final measurements)

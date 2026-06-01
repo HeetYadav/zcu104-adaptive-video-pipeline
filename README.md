@@ -61,9 +61,8 @@ See [Architecture Deep Dive →](docs/03_architecture.md)
 ```mermaid
 timeline
     title Pipeline Evolution — Bandwidth Reduction Journey
-    Phase 1 (pipeline.py) : Software-only MJPEG : ~8000 kbps : CPU inference (OpenCV DNN)
-    Phase 2 (pipeline_hw_1.py) : DPU inference + MJPEG : ~6000 kbps : YOLOv4 on FPGA fabric
-    Phase 3 (pipeline_hw.py) : DPU + VCU + ROI mask : ~350 kbps : Full hardware acceleration
+    Baseline (pipeline_hw_1.py) : DPU inference + MJPEG : ~6000 kbps : YOLOv4 on FPGA fabric
+    Final (pipeline_hw.py) : DPU + VCU + ROI mask : ~350 kbps : Full hardware acceleration
 ```
 
 ---
@@ -111,9 +110,8 @@ Deep dive: [Zone Masking Algorithm →](docs/04_zone_masking_algorithm.md)
 
 | File | Role |
 |------|------|
-| `pipeline_hw.py` | **Phase 3 — Full HW.** DPU inference + 3-zone mask + VCU H.264 (telemetry) + MJPEG HTTP stream |
-| `pipeline_hw_1.py` | **Phase 3 Baseline.** DPU inference + 3-zone mask + MJPEG HTTP stream (no VCU encoding) |
-| `pipeline.py` | **Phase 2.** Software-only baseline with OpenCV DNN inference |
+| `pipeline_hw.py` | **Final — Full HW.** DPU inference + 3-zone mask + VCU H.264 (telemetry) + MJPEG HTTP stream |
+| `pipeline_hw_1.py` | **Baseline.** DPU inference + 3-zone mask + MJPEG HTTP stream (no VCU encoding) |
 | `zone_mask.py` | 3-zone masking engine — `build_zone_mask_multi()` + `draw_zone_overlay_multi()` |
 | `adaptive_roi.py` | Motion-predictive ROI padding — expands bounding box asymmetrically in the direction of travel |
 | `tracker.py` | `CentroidTracker` — exponential-weighted velocity smoothing over 8-frame history |
