@@ -86,16 +86,13 @@ The project is organized around two key pipelines, representing the baseline and
 
 ## Key Results
 
-> [!IMPORTANT]
-> These numbers are placeholders. Replace with your actual `python3 realBenchmark.py` output.
-
 | Metric | Value |
 |--------|-------|
-| MJPEG baseline bandwidth | ~6,000–8,000 kbps |
-| VCU H.264 + ROI bandwidth (0 persons) | ~120 kbps |
-| VCU H.264 + ROI bandwidth (2 persons) | ~700 kbps |
-| Peak bandwidth reduction | **~97%** (empty scene) |
-| Typical bandwidth reduction | **~85–95%** (active scene) |
+| MJPEG Baseline Bandwidth | **8,821.1 kbps** |
+| VCU H.264 + ROI Bandwidth | **841.4 kbps** |
+| Average Bandwidth Reduction | **90.5% (10.5x less)** |
+| MJPEG Baseline Framerate | 8.6 FPS |
+| VCU H.264 + ROI Framerate | **9.5 FPS (+10% faster)** |
 | Inference hardware | DPU B4096 on FPGA fabric |
 | Encoding hardware | VCU H.264 encoder on FPGA PL |
 | CPU utilization during Final HW | Low (orchestration only) |

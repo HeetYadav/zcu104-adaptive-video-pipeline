@@ -57,11 +57,9 @@ def benchmark_pipeline(script_name, duration=15):
 
 ## Results
 
-> [!IMPORTANT]
-> **Replace these placeholders with your actual `python3 realBenchmark.py` output.**
-> Run the benchmark, then fill in the table and chart below with the real numbers.
-
 ### Raw Benchmark Output
+
+![Benchmark Terminal Output](../assets/diagrams/benchmark_terminal_output.png)
 
 ```
 =======================================================
@@ -69,16 +67,16 @@ def benchmark_pipeline(script_name, duration=15):
 =======================================================
 
 [1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)
-    Average Bandwidth: _______ kbps
-    Average Framerate:    _____ FPS
+    Average Bandwidth:   8821.1 kbps
+    Average Framerate:      8.6 FPS
 
-[2] Hardware H.264 VCU Pipeline (pipeline_hw.py)
-    Average Bandwidth: _______ kbps
-    Average Framerate:    _____ FPS
+[2] Hardware DPU + VCU H.264 Pipeline (pipeline_hw.py)
+    Average Bandwidth:    841.4 kbps
+    Average Framerate:      9.5 FPS
 
 [3] Comparison
-    Bandwidth Savings: The True Hardware Pipeline uses
-                       _____x LESS bandwidth than MJPEG!
+    Bandwidth Savings (DPU+MJPEG vs DPU+VCU):
+                       10.5x LESS bandwidth than MJPEG!
 =======================================================
 ```
 
@@ -86,10 +84,9 @@ def benchmark_pipeline(script_name, duration=15):
 
 | Metric | MJPEG Pipeline (`pipeline_hw_1.py`) | VCU H.264 Pipeline (`pipeline_hw.py`) | Reduction |
 |--------|-------------------------------------|---------------------------------------|-----------|
-| Average Bandwidth | ___ kbps | ___ kbps | **___%** |
-| Average Framerate | ___ FPS | ___ FPS | — |
-| Peak Bandwidth | ___ kbps | ___ kbps | — |
-| Bandwidth Ratio | 1.0× (baseline) | _.__× lower | — |
+| Average Bandwidth | 8821.1 kbps | 841.4 kbps | **90.5%** |
+| Average Framerate | 8.6 FPS | 9.5 FPS | **(+10%)** |
+| Bandwidth Ratio | 1.0× (baseline) | 10.5× lower | — |
 
 ### Bandwidth Chart
 
@@ -97,12 +94,9 @@ def benchmark_pipeline(script_name, duration=15):
 xychart-beta
     title "Pipeline Bandwidth Comparison (kbps)"
     x-axis ["MJPEG Baseline", "VCU H.264 + ROI"]
-    y-axis "Bandwidth (kbps)" 0 --> 9000
-    bar [6210, 350]
+    y-axis "Bandwidth (kbps)" 0 --> 9500
+    bar [8821.1, 841.4]
 ```
-
-> [!IMPORTANT]
-> Update the bar chart values above with your real numbers from the benchmark output. The format is `bar [mjpeg_value, vcu_value]`.
 
 ---
 

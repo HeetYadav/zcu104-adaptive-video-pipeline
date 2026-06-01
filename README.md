@@ -33,16 +33,12 @@ A surveillance or robotics camera streaming raw video over a network wastes enor
 
 ## Benchmark Results
 
-> [!IMPORTANT]
-> **Fill in your actual numbers from `python3 realBenchmark.py` here.**
+| Metric | DPU + MJPEG Baseline | DPU + VCU Hardware | Improvement |
+|--------|----------------------|--------------------|-------------|
+| Average Bandwidth | **8,821.1 kbps** | **841.4 kbps** | **10.5x Less Bandwidth** |
+| Average Framerate | 8.6 FPS | 9.5 FPS | **+10% Faster** |
 
-| Scenario | MJPEG Baseline | VCU H.264 + ROI | Reduction |
-|----------|---------------|-----------------|-----------|
-| 0 persons detected | ~4,000 kbps | ~120 kbps | **~97%** |
-| 1 person in frame | ~6,500 kbps | ~350 kbps | **~95%** |
-| 2 persons in frame | ~8,000 kbps | ~700 kbps | **~91%** |
-
-![Bandwidth Comparison Chart](assets/diagrams/benchmark_chart.png)
+![Benchmark Terminal Output](assets/diagrams/benchmark_terminal_output.png)
 
 ---
 

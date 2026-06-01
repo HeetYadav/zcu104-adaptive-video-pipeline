@@ -46,16 +46,16 @@ python3 tools/benchmark/realBenchmark.py
 =======================================================
 
 [1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)
-    Average Bandwidth:   6210.4 kbps
-    Average Framerate:      7.8 FPS
+    Average Bandwidth:   8821.1 kbps
+    Average Framerate:      8.6 FPS
 
-[2] Hardware H.264 VCU Pipeline (pipeline_hw.py)
-    Average Bandwidth:    258.3 kbps
-    Average Framerate:      9.2 FPS
+[2] Hardware DPU + VCU H.264 Pipeline (pipeline_hw.py)
+    Average Bandwidth:    841.4 kbps
+    Average Framerate:      9.5 FPS
 
 [3] Comparison
-    Bandwidth Savings: The True Hardware Pipeline uses
-                       24.0x LESS bandwidth than MJPEG!
+    Bandwidth Savings (DPU+MJPEG vs DPU+VCU):
+                       10.5x LESS bandwidth than MJPEG!
 =======================================================
 ```
 
