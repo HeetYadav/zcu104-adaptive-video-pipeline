@@ -17,6 +17,14 @@ import time
 import http.client
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+import os
+
+# ── Module path resolution ────────────────────────────────────────
+# Allows running from any directory: python3 pipelines/pipeline_sw/pipeline.py
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+for _mod in ['zone_mask', 'adaptive_roi', 'tracker', 'telemetry']:
+    sys.path.insert(0, os.path.join(_REPO_ROOT, 'modules', _mod))
+
 from tracker import CentroidTracker
 from adaptive_roi import adaptive_pad
 from zone_mask import build_zone_mask_multi, draw_zone_overlay_multi
