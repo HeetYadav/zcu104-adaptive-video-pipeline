@@ -1,0 +1,37 @@
+# ── Model files (too large for GitHub — download separately) ──────
+*.tar.gz
+*.gz
+*.xmodel
+*.weights
+*.pb
+*.onnx
+*.pt
+yolov4_leaky_spp_m/
+
+# ── Python ────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ───────────────────────────────────────────
+venv/
+.venv/
+env/
+
+# ── Board artifacts ───────────────────────────────────────────────
+*.log
+*.pid
+/tmp/
+
+# ── OS artifacts ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
