@@ -79,8 +79,6 @@ except ImportError:
 from tracker      import CentroidTracker
 from adaptive_roi import adaptive_pad
 from zone_mask    import build_zone_mask_multi, draw_zone_overlay_multi
-CONF_THRESH   = 0.30
-MAX_TARGETS   = 5
 
 # ── Load DPU model ────────────────────────────────────────────────
 print(f"[DPU] Loading model from {DPU_MODEL_DIR} ...")
