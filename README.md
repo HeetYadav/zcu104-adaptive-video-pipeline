@@ -119,8 +119,6 @@ Deep dive: [Zone Masking Algorithm →](docs/04_zone_masking_algorithm.md)
 | `telemetry.py` | Bandwidth telemetry helpers used by the pipelines |
 | `preflight.py` | Hardware preflight checker: run before `pipeline_hw.py` to verify all dependencies |
 | `export_yolo.py` | YOLOv4 model export utility |
-| `laptop_cam_server.py` | Alternative camera server using laptop webcam |
-| `stream.sdp` | SDP descriptor for RTP/UDP streaming (legacy, not used in current pipeline) |
 
 </details>
 
