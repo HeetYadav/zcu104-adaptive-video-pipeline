@@ -14,7 +14,7 @@ YOLOv4 runs on the DPU. H.264 encodes on the VCU. The CPU is barely touched.
 
 </div>
 
-![VLC Stream Output with Detection Zones](assets/photos/vlc_detection_zones.png)
+![VLC Stream Output with Detection Zones](assets/photos/vlc_detection_multi.png)
 
 ---
 
