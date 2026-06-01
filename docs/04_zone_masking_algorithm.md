@@ -131,6 +131,8 @@ flowchart TD
 
 ## Multi-Target Merging
 
+![Multi-Target Detection in VLC](../assets/photos/vlc_detection_multi.png)
+
 When multiple persons are detected simultaneously, zones from all targets are merged onto a single canvas.
 
 The merging strategy is a **two-pass painter's algorithm**:
