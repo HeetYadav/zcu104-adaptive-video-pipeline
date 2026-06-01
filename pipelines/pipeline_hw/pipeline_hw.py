@@ -76,12 +76,6 @@ except ImportError:
     print("[ERROR] vart / xir not found.")
     _sys.exit(1)
 
-# ── Module path resolution ────────────────────────────────────────
-# Allows running from any directory: python3 pipelines/pipeline_hw/pipeline_hw.py
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _mod in ['zone_mask', 'adaptive_roi', 'tracker', 'telemetry']:
-    sys.path.insert(0, os.path.join(_REPO_ROOT, 'modules', _mod))
-
 from tracker      import CentroidTracker
 from adaptive_roi import adaptive_pad
 from zone_mask    import build_zone_mask_multi, draw_zone_overlay_multi

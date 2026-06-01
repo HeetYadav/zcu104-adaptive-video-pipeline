@@ -35,14 +35,8 @@ import threading
 import time
 import http.client
 import sys
-import os
+import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
-# ── Module path resolution ────────────────────────────────────────
-# Allows running from any directory: python3 pipelines/pipeline_hw_1/pipeline_hw_1.py
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _mod in ['zone_mask', 'adaptive_roi', 'tracker', 'telemetry']:
-    sys.path.insert(0, os.path.join(_REPO_ROOT, 'modules', _mod))
 
 # ── Vitis AI Runtime ──────────────────────────────────────────────
 try:
