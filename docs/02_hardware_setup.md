@@ -28,7 +28,6 @@ The Xilinx ZCU104 is an evaluation kit for the Zynq UltraScale+ MPSoC family. It
 |-----------|--------------|
 | **SoC** | Zynq UltraScale+ ZU7EV |
 | **Processing System (PS)** | Quad-core ARM Cortex-A53 @ 1.2 GHz |
-| **GPU (PS)** | ARM Mali-400 MP2 (not used in this project) |
 | **Programmable Logic (PL)** | 504K LUTs, 1,728 DSP slices |
 | **DPU** | B4096 deep learning accelerator (in PL fabric) |
 | **VCU** | H.264 / H.265 hardware encoder/decoder (in PL fabric) |
