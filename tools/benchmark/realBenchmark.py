@@ -66,9 +66,19 @@ def benchmark_pipeline(script_name, duration=15):
                     kbps_list.append(bw)
                     fps_list.append(fps)
                     
-    # 5. Stop the pipeline
+    # 5. Stop the pipeline cleanly so DPU memory is freed!
     print(f"\n[Automated Tester] Stopping {script_name}...")
-    os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+    # Send SIGINT (Ctrl+C) so the Python script can catch KeyboardInterrupt and clean up
+    os.killpg(os.getpgid(proc.pid), signal.SIGINT)
+    try:
+        proc.wait(timeout=4)
+    except subprocess.TimeoutExpired:
+        print("[Automated Tester] Pipeline didn't stop, forcing SIGKILL...")
+        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        proc.wait()
+    
+    # Give the DPU driver a moment to release CMA memory and /tmp/vart_device_0
+    time.sleep(2)
     
     avg_kbps = sum(kbps_list) / len(kbps_list) if kbps_list else 0.0
     avg_fps = sum(fps_list) / len(fps_list) if fps_list else 0.0
@@ -84,10 +94,10 @@ if __name__ == "__main__":
     print("the resulting telemetry output to generate a report.")
     
     # Run MJPEG (CPU video) Pipeline
-    kbps_1, fps_1 = benchmark_pipeline("pipeline_hw_1.py", duration=15)
+    kbps_1, fps_1 = benchmark_pipeline("pipelines/pipeline_hw_1/pipeline_hw_1.py", duration=15)
     
     # Run H.264 (VCU video) Pipeline
-    kbps_hw, fps_hw = benchmark_pipeline("pipeline_hw.py", duration=15)
+    kbps_hw, fps_hw = benchmark_pipeline("pipelines/pipeline_hw/pipeline_hw.py", duration=15)
     
     print("\n\n=======================================================")
     print("                 FINAL PIPELINE REPORT                 ")
