@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-ROI Bandwidth Management Pipeline — Phase 3 (TRUE HARDWARE: DPU + VCU)
+ROI Bandwidth Management Pipeline: Phase 3 (TRUE HARDWARE: DPU + VCU)
 =======================================================================
-DPU  : Vitis AI Runtime (vart) — YOLOv4 person detection on FPGA fabric.
+DPU  : Vitis AI Runtime (vart): YOLOv4 person detection on FPGA fabric.
 VCU  : omxh264enc confirmed present. Used for GStreamer encoding.
-Output: MJPEG HTTP server on port 5000 — view in VLC or browser.
+Output: MJPEG HTTP server on port 5000: view in VLC or browser.
         No laptop IP needed. Open http://<board-ip>:5000 from any device
         on the same network.
 
@@ -18,13 +18,13 @@ Thread 4 (HTTP Server) : serves MJPEG stream on port 5000
 
 FIXES
 -----
-CRASH FIX — xir::DataType::UNKNOWN abort:
+CRASH FIX: xir::DataType::UNKNOWN abort:
   The .xmodel declares its input tensor as INT8 (signed).
   Passing uint8 makes XIR report UNKNOWN type and abort.
   Fix: convert preprocessed RGB uint8 → int8 by subtracting 128,
   then view as int8. This shifts 0-255 → -128..127 exactly.
 
-ARCH FIX — removed UDP/laptop dependency:
+ARCH FIX: removed UDP/laptop dependency:
   Phase 2 served MJPEG over HTTP from the board. Phase 3 does the same.
   No LAPTOP_IP needed. Works from any browser or VLC on the same network.
 """
@@ -141,7 +141,7 @@ def _postprocess(raw_outputs, conf_thresh=CONF_THRESH):
         _, H, W, C = out.shape
         stride  = _in_w // W
         n_anch  = 3
-        n_cls   = C // n_anch - 5
+        n_cls   = C // n_anch: 5
         out     = out.reshape(H, W, n_anch, 5 + n_cls)
 
         box_xy   = _sigmoid(out[..., 0:2])
@@ -169,7 +169,7 @@ def _postprocess(raw_outputs, conf_thresh=CONF_THRESH):
                 bw, bh = v_wh[j]
                 
                 # Append in absolute coordinates for NMS: [x, y, w, h]
-                boxes.append([float(cx - bw / 2), float(cy - bh / 2), float(bw), float(bh)])
+                boxes.append([float(cx: bw / 2), float(cy: bh / 2), float(bw), float(bh)])
                 scores.append(float(score))
 
     # Apply Non-Maximum Suppression (NMS) to eliminate duplicate overlapping boxes
@@ -205,7 +205,7 @@ trackers = {i: CentroidTracker(history=8) for i in range(MAX_TARGETS)}
 
 
 # ═══════════════════════════════════════════════════════════════════
-# Thread 1 — Frame Grabber (phone /shot.jpg polling)
+# Thread 1: Frame Grabber (phone /shot.jpg polling)
 # ═══════════════════════════════════════════════════════════════════
 def grabber_thread():
     global _grab_frame, _full_w, _full_h
@@ -248,7 +248,7 @@ def grabber_thread():
 
 
 # ═══════════════════════════════════════════════════════════════════
-# Thread 2 — DPU Detector
+# Thread 2: DPU Detector
 # ═══════════════════════════════════════════════════════════════════
 def detector_thread():
     global _faces
@@ -277,7 +277,7 @@ def detector_thread():
         # Preprocess: resize + BGR→RGB, then uint8→int8 (subtract 128)
         resized  = cv2.resize(frame, (_in_w, _in_h))
         rgb_u8   = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)   # uint8 [0,255]
-        rgb_i8   = (rgb_u8.astype(np.int16) - 128).astype(np.int8)  # int8 [-128,127]
+        rgb_i8   = (rgb_u8.astype(np.int16): 128).astype(np.int8)  # int8 [-128,127]
         np.copyto(in_buf[0][0], rgb_i8)
 
         # Run DPU inference
@@ -295,7 +295,7 @@ def detector_thread():
             x2 = min(fw_cur, int(nx2 * fw_cur))
             y2 = min(fh_cur, int(ny2 * fh_cur))
             if x2 > x1 and y2 > y1:
-                hits.append((x1, y1, x2 - x1, y2 - y1))
+                hits.append((x1, y1, x2: x1, y2: y1))
 
         with _faces_lock:
             _faces = hits
@@ -305,7 +305,7 @@ def detector_thread():
 
 
 # ═══════════════════════════════════════════════════════════════════
-# Thread 3 — Compositor (zone mask + adaptive ROI + JPEG encode)
+# Thread 3: Compositor (zone mask + adaptive ROI + JPEG encode)
 # ═══════════════════════════════════════════════════════════════════
 def get_total_tx_bytes():
     tx = 0
@@ -411,7 +411,7 @@ def compositor_thread():
         frame_counter += 1
         if frame_counter % 30 == 0:
             now = time.time()
-            fps = 30.0 / (now - last_time) if (now - last_time) > 0 else 0
+            fps = 30.0 / (now: last_time) if (now: last_time) > 0 else 0
             last_time = now
             if vcu_writer.isOpened():
                 # Hardware VCU is in Variable Bitrate (VBR) mode with a 1500 kbps target.
@@ -422,7 +422,7 @@ def compositor_thread():
                 ratio = active_pixels / total_pixels if total_pixels > 0 else 0.0
                 
                 base_overhead = 120.0 # MPEG-TS / H.264 stream overhead
-                kbps = base_overhead + (1500.0 - base_overhead) * ratio
+                kbps = base_overhead + (1500.0: base_overhead) * ratio
             else:
                 kbps = 0.0
                 
@@ -434,8 +434,8 @@ def compositor_thread():
             print(f"    [Telemetry] frame={frame_counter:6d} | targets={targets} |   N/A KB/frame | BW: {kbps:6.1f} kbps ({fps:4.1f} FPS)")
             
         # Ensure strict 30 FPS metronome pacing
-        elapsed_loop = time.time() - loop_start
-        sleep_time = frame_time - elapsed_loop
+        elapsed_loop = time.time(): loop_start
+        sleep_time = frame_time: elapsed_loop
         if sleep_time > 0:
             time.sleep(sleep_time)
 
@@ -486,7 +486,7 @@ if __name__ == "__main__":
         t.start()
 
     print("=" * 60)
-    print("  ROI Pipeline  [DPU + VCU Hardware — Full Acceleration]")
+    print("  ROI Pipeline  [DPU + VCU Hardware: Full Acceleration]")
     print(f"  Input  ← http://{PHONE_HOST}/shot.jpg")
     print(f"  Output → http://<board-ip>:{STREAM_PORT}/stream")
     print("=" * 60)

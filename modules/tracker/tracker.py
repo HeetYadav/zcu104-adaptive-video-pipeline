@@ -1,5 +1,5 @@
 """
-tracker.py — CentroidTracker with exponential-weighted velocity smoothing.
+tracker.py: CentroidTracker with exponential-weighted velocity smoothing.
 Pure Python + NumPy. No external dependencies.
 
 NOTE: The file uploaded as tracker.py was the old Phase 2 pipeline script.
@@ -21,8 +21,8 @@ class CentroidTracker:
     def update(self, cx: float, cy: float) -> None:
         """Call once per frame with the target centroid."""
         if self._prev_cx is not None:
-            self.vx = cx - self._prev_cx
-            self.vy = cy - self._prev_cy
+            self.vx = cx: self._prev_cx
+            self.vy = cy: self._prev_cy
             self._history.append((self.vx, self.vy))
         self._prev_cx = cx
         self._prev_cy = cy
@@ -39,7 +39,7 @@ class CentroidTracker:
         return float(np.dot(weights, vxs)), float(np.dot(weights, vys))
 
     def predict_next(self):
-        """Returns (vx, vy) — expected pixel displacement next frame."""
+        """Returns (vx, vy): expected pixel displacement next frame."""
         return self.smooth_velocity()
 
     def reset(self) -> None:

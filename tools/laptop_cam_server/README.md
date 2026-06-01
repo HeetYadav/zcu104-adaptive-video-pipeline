@@ -2,7 +2,7 @@
 
 ---
 
-# `laptop_cam_server.py` — Laptop Webcam Camera Server
+# `laptop_cam_server.py`: Laptop Webcam Camera Server
 
 > **Alternative camera source.** If you don't have an Android phone or the IP Webcam app is not available, run this script on your Windows/Linux laptop to serve its built-in webcam over the same HTTP endpoint (`/shot.jpg`) that the pipelines use.
 
@@ -38,7 +38,7 @@ Look for the IPv4 address of your Wi-Fi adapter.
 3. Serves a lightweight HTTP server on port 8080 with a single endpoint: `GET /shot.jpg`
 4. Each `GET /shot.jpg` request returns the **latest captured JPEG frame**
 
-The HTTP server behavior is **identical** to IP Webcam's `/shot.jpg` endpoint — the ZCU104 pipelines cannot tell the difference.
+The HTTP server behavior is **identical** to IP Webcam's `/shot.jpg` endpoint: the ZCU104 pipelines cannot tell the difference.
 
 ## Backend Selection
 
@@ -55,19 +55,16 @@ for backend, name in [(cv2.CAP_DSHOW, "DSHOW"),
 
 | Backend | Platform | Notes |
 |---------|----------|-------|
-| `CAP_DSHOW` | Windows | DirectShow — fastest on Windows |
-| `CAP_MSMF` | Windows | Media Foundation — fallback |
-| `CAP_ANY` | Any | Auto-detect — last resort |
+| `CAP_DSHOW` | Windows | DirectShow: fastest on Windows |
+| `CAP_MSMF` | Windows | Media Foundation: fallback |
+| `CAP_ANY` | Any | Auto-detect: last resort |
 
 ## Troubleshooting
 
 **Error: "Cannot open webcam with any backend!"**
 
 The webcam is in use by another application. Close:
-- Teams, Zoom, Google Meet, Discord
-- Any browser tab with active camera access
-- OBS, Streamlabs, or any screen-capture tool
-
+- Teams, Zoom, Google Meet, Discord- Any browser tab with active camera access- OBS, Streamlabs, or any screen-capture tool
 Then retry.
 
 **Low FPS or high latency:**
@@ -87,5 +84,4 @@ Edit these variables at the top of `laptop_cam_server.py`:
 
 ## See Also
 
-- [Hardware Setup — IP Webcam](../../docs/02_hardware_setup.md#ip-webcam-app-setup)
-- [Pipeline Config — PHONE_HOST](../../pipelines/pipeline_hw/README.md#configuration)
+- [Hardware Setup: IP Webcam](../../docs/02_hardware_setup.md#ip-webcam-app-setup)- [Pipeline Config: PHONE_HOST](../../pipelines/pipeline_hw/README.md#configuration)

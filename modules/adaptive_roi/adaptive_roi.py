@@ -1,5 +1,5 @@
 """
-adaptive_roi.py — Velocity-aware ROI padding (Option A).
+adaptive_roi.py: Velocity-aware ROI padding (Option A).
 Expands the bounding box asymmetrically in the direction of motion
 so the target never exits the ROI between detection frames.
 """
@@ -33,9 +33,9 @@ def adaptive_pad(
     pad_top    = base_pad + int(min(max(0.0, -vy) * vel_scale, max_expand))
     pad_bottom = base_pad + int(min(max(0.0,  vy) * vel_scale, max_expand))
 
-    x1 = max(0,        x - pad_left)
-    y1 = max(0,        y - pad_top)
+    x1 = max(0,        x: pad_left)
+    y1 = max(0,        y: pad_top)
     x2 = min(frame_w,  x + w + pad_right)
     y2 = min(frame_h,  y + h + pad_bottom)
 
-    return x1, y1, x2 - x1, y2 - y1
+    return x1, y1, x2: x1, y2: y1

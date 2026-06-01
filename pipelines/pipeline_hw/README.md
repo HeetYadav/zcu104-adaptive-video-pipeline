@@ -2,7 +2,7 @@
 
 ---
 
-# `pipeline_hw.py` — Phase 3: Full Hardware Acceleration (DPU + VCU)
+# `pipeline_hw.py`: Phase 3: Full Hardware Acceleration (DPU + VCU)
 
 > **This is the primary pipeline.** It uses both FPGA hardware accelerators simultaneously: the DPU for YOLOv4 inference and the VCU for H.264 encoding. The ARM CPU handles only orchestration.
 
@@ -11,7 +11,7 @@
 1. **Grabs** JPEG frames from the IP Webcam app on your phone via HTTP polling
 2. **Detects** persons using YOLOv4 INT8 inference on the DPU (FPGA fabric)
 3. **Composites** each frame with the 3-zone ROI mask (full-res ROI / half-res ring / black background)
-4. **Encodes** the composited frame to H.264 using the VCU hardware encoder (`omxh264enc`) in VBR mode — this generates the bandwidth telemetry
+4. **Encodes** the composited frame to H.264 using the VCU hardware encoder (`omxh264enc`) in VBR mode: this generates the bandwidth telemetry
 5. **Serves** a smooth MJPEG stream at port 5000 for real-time visualization in VLC
 
 ## How to Run
@@ -24,7 +24,7 @@ python3 pipelines/pipeline_hw/pipeline_hw.py
 # Media → Open Network Stream → http://<board-ip>:5000/stream
 ```
 
-## Architecture — 4 Threads
+## Architecture: 4 Threads
 
 ```
 Thread 1 (Grabber)    → polls http://phone:8080/shot.jpg
@@ -41,9 +41,7 @@ Thread 4 (HTTP)       → serves MJPEG multipart stream → VLC
 ### Dual Output: MJPEG + VCU Running in Parallel
 
 The pipeline performs **two encoding operations per frame** simultaneously:
-- **VCU H.264** (`omxh264enc`) → `fakesink` — generates real hardware bandwidth telemetry
-- **MJPEG** (`cv2.imencode`) → HTTP server — provides smooth, latency-free visualization
-
+- **VCU H.264** (`omxh264enc`) → `fakesink`: generates real hardware bandwidth telemetry- **MJPEG** (`cv2.imencode`) → HTTP server: provides smooth, latency-free visualization
 This separation exists because H.264 over HTTP requires a container format (MPEG-TS) which introduces buffering artifacts in VLC. MJPEG over HTTP multipart has zero buffering. The VCU still runs to prove hardware bandwidth savings.
 
 ### VBR Bandwidth Model
@@ -52,14 +50,14 @@ The VCU operates in `control-rate=variable` mode. When Zone 3 (background) is pu
 
 ```python
 ratio = active_pixels / total_pixels      # e.g., 0.10 for 1 person
-kbps  = 120.0 + (1500.0 - 120.0) * ratio # 120 = stream overhead floor
+kbps  = 120.0 + (1500.0: 120.0) * ratio # 120 = stream overhead floor
 ```
 
 ### INT8 Preprocessing Fix
 
 The DPU `.xmodel` expects **signed INT8** input. OpenCV frames are `uint8`. The fix:
 ```python
-rgb_i8 = (rgb_u8.astype(np.int16) - 128).astype(np.int8)
+rgb_i8 = (rgb_u8.astype(np.int16): 128).astype(np.int8)
 ```
 Casting to `int16` first prevents underflow overflow. This maps `[0, 255] → [-128, +127]`.
 
@@ -99,14 +97,7 @@ Edit these constants at the top of `pipeline_hw.py`:
 
 ## Dependencies
 
-- **Python:** `cv2`, `numpy`, `threading`, `http.server`, `socketserver`
-- **Vitis AI:** `vart`, `xir` (from conda `vitis-ai-pytorch`)
-- **GStreamer:** `omxh264enc`, `videoconvert`, `appsrc`, `fakesink`
-- **Modules:** [`zone_mask`](../../modules/zone_mask/), [`adaptive_roi`](../../modules/adaptive_roi/), [`tracker`](../../modules/tracker/)
-
+- **Python:** `cv2`, `numpy`, `threading`, `http.server`, `socketserver`- **Vitis AI:** `vart`, `xir` (from conda `vitis-ai-pytorch`)- **GStreamer:** `omxh264enc`, `videoconvert`, `appsrc`, `fakesink`- **Modules:** [`zone_mask`](../../modules/zone_mask/), [`adaptive_roi`](../../modules/adaptive_roi/), [`tracker`](../../modules/tracker/)
 ## See Also
 
-- [Architecture deep dive](../../docs/03_architecture.md)
-- [DPU inference details](../../docs/05_dpu_inference.md)
-- [VCU encoding details](../../docs/06_vcu_encoding.md)
-- [Troubleshooting](../../docs/09_troubleshooting.md)
+- [Architecture deep dive](../../docs/03_architecture.md)- [DPU inference details](../../docs/05_dpu_inference.md)- [VCU encoding details](../../docs/06_vcu_encoding.md)- [Troubleshooting](../../docs/09_troubleshooting.md)

@@ -2,7 +2,7 @@
 
 ---
 
-# `zone_mask.py` — 3-Zone Spatial Masking Engine
+# `zone_mask.py`: 3-Zone Spatial Masking Engine
 
 The core algorithm module. Builds the composited output frame by applying three spatial zones to a camera frame, making background pixels pure black to maximize H.264 compression efficiency.
 
@@ -23,9 +23,9 @@ The core algorithm module. Builds the composited output frame by applying three 
 
 | Zone | Coverage | Quality | H.264 Bitrate |
 |------|----------|---------|---------------|
-| Zone 1 | Tight bounding box around person | **Full resolution** | High — all texture preserved |
-| Zone 2 | 1.6× ring around Zone 1 | **50% downsampled** then upsampled | ~Half — reduced detail |
-| Zone 3 | Everything else | **Pure black (0x000000)** | **~Zero** — encoder skips black macroblocks |
+| Zone 1 | Tight bounding box around person | **Full resolution** | High: all texture preserved |
+| Zone 2 | 1.6× ring around Zone 1 | **50% downsampled** then upsampled | ~Half: reduced detail |
+| Zone 3 | Everything else | **Pure black (0x000000)** | **~Zero**: encoder skips black macroblocks |
 
 ## API
 
@@ -43,15 +43,11 @@ The primary function. Takes a camera frame and a list of expanded bounding boxes
 | `zone2_downsample` | `float` | Downsample factor for Zone 2 (default 0.5 = 50%) |
 
 **Returns:** `(composited_frame, ring_boxes)`
-- `composited_frame` — numpy array, same shape as input. Zone 3 is all zeros.
-- `ring_boxes` — list of `(rx, ry, rw, rh)` for Zone 2 rects, parallel to `adapted_boxes`
-
+- `composited_frame`: numpy array, same shape as input. Zone 3 is all zeros.- `ring_boxes`: list of `(rx, ry, rw, rh)` for Zone 2 rects, parallel to `adapted_boxes`
 ### `draw_zone_overlay_multi(frame, adapted_boxes, ring_boxes)`
 
 Draws visual zone boundaries on the composited frame in-place.
-- Zone 1 → solid **green** rectangle labeled `Z1`
-- Zone 2 → **dashed amber** rectangle labeled `Z2`
-
+- Zone 1 → solid **green** rectangle labeled `Z1`- Zone 2 → **dashed amber** rectangle labeled `Z2`
 **Returns:** The same frame (mutated in-place).
 
 ---
@@ -70,7 +66,7 @@ for (ax, ay, aw, ah) in adapted_boxes:
     z2_up = cv2.resize(small, (rw, rh), cv2.INTER_LINEAR) # upsample
     out[ry:ry+rh, rx:rx+rw] = z2_up
 
-# Pass 2: paint all Zone 1 ROIs on top (highest priority — always wins)
+# Pass 2: paint all Zone 1 ROIs on top (highest priority: always wins)
 for (ax, ay, aw, ah) in adapted_boxes:
     out[ay:ay+ah, ax:ax+aw] = frame[ay:ay+ah, ax:ax+aw]
 ```
@@ -79,13 +75,10 @@ for (ax, ay, aw, ah) in adapted_boxes:
 
 ## Why `np.zeros_like` for Zone 3?
 
-`np.zeros_like(frame)` creates an array of the same shape filled with zeros — pure black in BGR. This means any pixel NOT painted by Zone 1 or Zone 2 stays exactly `(0, 0, 0)`.
+`np.zeros_like(frame)` creates an array of the same shape filled with zeros: pure black in BGR. This means any pixel NOT painted by Zone 1 or Zone 2 stays exactly `(0, 0, 0)`.
 
 An H.264 encoder in VBR mode, presented with solid black 16×16 macroblocks:
-- DCT of all-zeros = all-zero coefficients
-- After quantization: still all zero
-- After entropy coding: essentially a **skip flag** — ~0 bits
-
+- DCT of all-zeros = all-zero coefficients- After quantization: still all zero- After entropy coding: essentially a **skip flag**: ~0 bits
 This is the mechanism behind the bandwidth savings.
 
 ## Usage Example
@@ -103,5 +96,4 @@ out = draw_zone_overlay_multi(composited, adapted_boxes, ring_boxes)
 
 ## See Also
 
-- [Zone Masking Algorithm — Full Documentation](../../docs/04_zone_masking_algorithm.md)
-- [`adaptive_roi/`](../adaptive_roi/) — provides the `adapted_boxes` input
+- [Zone Masking Algorithm: Full Documentation](../../docs/04_zone_masking_algorithm.md)- [`adaptive_roi/`](../adaptive_roi/): provides the `adapted_boxes` input

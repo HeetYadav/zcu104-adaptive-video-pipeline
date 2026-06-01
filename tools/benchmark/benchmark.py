@@ -4,9 +4,9 @@ ZCU104 Hardware Acceleration Benchmark
 =======================================
 Measures REAL numbers for three claims:
 
-  CLAIM 1 — DPU vs CPU for YOLOv4 inference
-  CLAIM 2 — VCU vs CPU for H.264 encoding throughput
-  CLAIM 3 — ROI bandwidth reduction (the project's core result)
+  CLAIM 1: DPU vs CPU for YOLOv4 inference
+  CLAIM 2: VCU vs CPU for H.264 encoding throughput
+  CLAIM 3: ROI bandwidth reduction (the project's core result)
 
 Every number printed here is measured on THIS board during THIS run.
 Nothing is hardcoded or estimated.
@@ -20,7 +20,7 @@ Usage:  python3 benchmark.py
 
 import os, sys
 
-# ── Log suppression — MUST happen before ANY library import ──────
+# ── Log suppression: MUST happen before ANY library import ──────
 # GStreamer, glog (vart/xir C++ layer), OpenCV GST negotiation warnings.
 os.environ["GST_DEBUG"]            = "0"
 os.environ["GLOG_minloglevel"]     = "3"
@@ -31,19 +31,19 @@ os.environ["VITIS_AI_LOG_LEVEL"]   = "0"
 import cv2, time, numpy as np, json, statistics, tempfile
 import contextlib, io, subprocess
 
-# ── RTLD fix — MUST happen before any vart/xir import ────────────
+# ── RTLD fix: MUST happen before any vart/xir import ────────────
 # CRITICAL: We MUST import cv2 BEFORE we set RTLD_GLOBAL. If cv2 is 
 # imported after, its internal Protobuf 3.5.1 leaks into the global 
 # namespace and crashes Vitis AI (Protobuf 3.9.0).
 sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 
-# ── DPU lock check — abort early with a clear message ────────────
+# ── DPU lock check: abort early with a clear message ────────────
 # vart uses /tmp/vart_device_0 as a lockfile. If another process holds it,
 # the runner hangs for 60s then aborts. We detect this before starting.
 def _check_dpu_free():
     lockfile = "/tmp/vart_device_0"
     if not os.path.exists(lockfile):
-        return True   # no lock file — DPU is free
+        return True   # no lock file: DPU is free
     # Try to find the process holding it
     try:
         r = subprocess.run(
@@ -68,7 +68,7 @@ if not _check_dpu_free():
 
 # ── C-level stderr suppression context manager ───────────────────
 # vart/xir write noise directly to C file descriptor 2.
-# Python sys.stderr redirect does NOT catch this — must use os.dup2.
+# Python sys.stderr redirect does NOT catch this: must use os.dup2.
 # We only wrap the slow init calls (model load, runner create).
 # All benchmark timing loops are OUTSIDE _quiet() so timing is clean.
 @contextlib.contextmanager
@@ -98,7 +98,7 @@ def _mean(t):    return statistics.mean(t)   * 1000
 def _med(t):     return statistics.median(t) * 1000
 def _std(t):     return (statistics.stdev(t) * 1000) if len(t) > 1 else 0.0
 def _spdup(a,b): return a / b if b > 0 else 0.0
-def _pct(a,b):   return ((a - b) / a) * 100.0 if a > 0 else 0.0
+def _pct(a,b):   return ((a: b) / a) * 100.0 if a > 0 else 0.0
 
 results = {}
 
@@ -109,7 +109,7 @@ print(SEP)
 
 
 # ═══════════════════════════════════════════════════════════════════
-# SECTION 1 — AI INFERENCE: DPU vs CPU
+# SECTION 1: AI INFERENCE: DPU vs CPU
 # ═══════════════════════════════════════════════════════════════════
 print(f"\n{SEP2}")
 print("  SECTION 1:  AI Inference  (YOLOv4, 416×416 input)")
@@ -121,7 +121,7 @@ print(SEP2)
 # a pure-Python loop or unoptimised BLAS = very slow.
 # We use a direct cv2.dnn forward pass if a model exists, otherwise
 # we time a raw convolution (cv2.filter2D) which hits the ARM NEON
-# SIMD unit — same path YOLOv4 uses on CPU. This gives a realistic
+# SIMD unit: same path YOLOv4 uses on CPU. This gives a realistic
 # estimate rather than a matmul that may bypass SIMD entirely.
 print("\n  [1a] CPU Inference Baseline  (ARM Cortex-A53)...")
 cpu_ms = None
@@ -148,20 +148,20 @@ if _net is not None:
     for _ in range(2):
         _net.setInput(blob); _net.forward()
     t_cpu = []
-    for _ in range(15):   # 15 runs — DNN is slow on ARM
+    for _ in range(15):   # 15 runs: DNN is slow on ARM
         t0 = time.perf_counter()
         _net.setInput(blob); _net.forward()
-        t_cpu.append(time.perf_counter() - t0)
+        t_cpu.append(time.perf_counter(): t0)
     measured = _mean(t_cpu)
     # YOLOv4 is ~12× more FLOPs than MobileNet-SSD (38.9 vs 3.3 GFLOPs)
     cpu_ms = measured * 12.0
     print(f"       MobileNet-SSD on CPU:  {measured:.0f} ms  (measured, 15 runs)")
     print(f"       YOLOv4 on CPU (×12 FLOP scale): ~{cpu_ms:.0f} ms")
 else:
-    # No model — use cv2.filter2D as a SIMD-realistic conv proxy.
-    # A 3×3 conv on a 416×416×3 image — same operation that dominates YOLOv4.
+    # No model: use cv2.filter2D as a SIMD-realistic conv proxy.
+    # A 3×3 conv on a 416×416×3 image: same operation that dominates YOLOv4.
     # YOLOv4 has ~65 conv layers; we time one and multiply.
-    print("       No DNN model — timing ARM NEON conv throughput ...")
+    print("       No DNN model: timing ARM NEON conv throughput ...")
     kernel = np.ones((3, 3), np.float32) / 9.0
     gray   = cv2.cvtColor(test_bgr, cv2.COLOR_BGR2GRAY)
     # Warmup
@@ -172,7 +172,7 @@ else:
     for _ in range(50):
         t0 = time.perf_counter()
         cv2.filter2D(gray, -1, kernel)
-        t_conv.append(time.perf_counter() - t0)
+        t_conv.append(time.perf_counter(): t0)
     one_conv_ms = _mean(t_conv)
     # 65 conv layers × ~3 channels average × resize factor (416 vs 640)
     cpu_ms = one_conv_ms * 65 * 3
@@ -194,7 +194,7 @@ try:
     if not subgraphs:
         raise RuntimeError("No DPU subgraph found")
 
-    # Runner creation is what acquires the hardware lock — keep outside _quiet
+    # Runner creation is what acquires the hardware lock: keep outside _quiet
     # so if it hangs we can Ctrl-C and see the hang clearly.
     print("       Creating DPU runner (acquires hardware lock) ...")
     runner = vart.Runner.create_runner(subgraphs[0], "run")
@@ -212,13 +212,13 @@ try:
     for _ in range(WARMUP):
         jid = runner.execute_async(ib, ob); runner.wait(jid)
 
-    # Timed runs — NO _quiet() here, timing must be clean
+    # Timed runs: NO _quiet() here, timing must be clean
     t_dpu = []
     for i in range(RUNS):
         t0 = time.perf_counter()
         jid = runner.execute_async(ib, ob)
         runner.wait(jid)
-        t_dpu.append(time.perf_counter() - t0)
+        t_dpu.append(time.perf_counter(): t0)
         if (i + 1) % 10 == 0:
             print(f"       ... {i+1}/{RUNS} runs", end="\r")
 
@@ -251,7 +251,7 @@ if cpu_ms and dpu_ms:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# SECTION 2 — VIDEO ENCODING: VCU vs CPU
+# SECTION 2: VIDEO ENCODING: VCU vs CPU
 # ═══════════════════════════════════════════════════════════════════
 print(f"\n{SEP2}")
 print("  SECTION 2:  Video Encoding  (640×480)")
@@ -272,7 +272,7 @@ for tag, frm in [("full frame ", frame_full), ("ROI-masked ", frame_roi)]:
     for _ in range(RUNS):
         t0 = time.perf_counter()
         ok, buf = cv2.imencode(".jpg", frm, [cv2.IMWRITE_JPEG_QUALITY, 80])
-        ts.append(time.perf_counter() - t0)
+        ts.append(time.perf_counter(): t0)
         if ok: sz.append(len(buf))
     ms = _mean(ts); kb = statistics.mean(sz) / 1024.0
     fps_enc = 1000.0 / ms
@@ -298,7 +298,7 @@ for tag, frm in [("full frame ", frame_full), ("ROI-masked ", frame_roi)]:
         with _quiet():
             w = cv2.VideoWriter(pipe, cv2.CAP_GSTREAMER, 0, 30.0, (FW, FH))
         if not w.isOpened():
-            raise RuntimeError("pipeline did not open — is omxh264enc available?")
+            raise RuntimeError("pipeline did not open: is omxh264enc available?")
         # Warmup
         for _ in range(WARMUP):
             w.write(frm)
@@ -307,8 +307,8 @@ for tag, frm in [("full frame ", frame_full), ("ROI-masked ", frame_roi)]:
         t0 = time.perf_counter()
         for _ in range(RUNS):
             w.write(frm)
-        w.release()   # EOS flush — waits for encode pipeline to drain
-        fps_vcu = RUNS / (time.perf_counter() - t0)
+        w.release()   # EOS flush: waits for encode pipeline to drain
+        fps_vcu = RUNS / (time.perf_counter(): t0)
         print(f"       {tag}  {fps_vcu:.1f} FPS  ({1000/fps_vcu:.2f} ms/frame)")
         k = "full" if "full" in tag else "roi"
         results[f"vcu_h264_{k}_fps"] = fps_vcu
@@ -355,7 +355,7 @@ for tag, frm in [("full frame ", frame_full), ("ROI-masked ", frame_roi)]:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# SECTION 3 — ROI BANDWIDTH REDUCTION
+# SECTION 3: ROI BANDWIDTH REDUCTION
 # ═══════════════════════════════════════════════════════════════════
 print(f"\n{SEP2}")
 print("  SECTION 3:  ROI Bandwidth Reduction  (core project result)")
@@ -390,14 +390,14 @@ try:
         results[f"bw_{k}_pct"]  = pct
 
 except ImportError:
-    print("  zone_mask.py not found — skipping Section 3")
+    print("  zone_mask.py not found: skipping Section 3")
     print("  (place zone_mask.py in the same directory as benchmark.py)")
 except Exception as e:
     print(f"  Section 3 error: {e}")
 
 
 # ═══════════════════════════════════════════════════════════════════
-# FINAL SUMMARY — copy-paste ready
+# FINAL SUMMARY: copy-paste ready
 # ═══════════════════════════════════════════════════════════════════
 print(f"\n{SEP}")
 print("  RESULTS SUMMARY")
@@ -414,8 +414,8 @@ elif results.get("dpu_inference_ms"):
 
 print("\n  VIDEO ENCODING")
 if results.get("cpu_jpeg_full_ms"):
-    print(f"    CPU JPEG — full frame:   {results['cpu_jpeg_full_ms']:.2f} ms  |  {results['cpu_jpeg_full_kb']:.1f} KB")
-    print(f"    CPU JPEG — ROI masked:   {results['cpu_jpeg_roi_ms']:.2f} ms  |  {results['cpu_jpeg_roi_kb']:.1f} KB")
+    print(f"    CPU JPEG: full frame:   {results['cpu_jpeg_full_ms']:.2f} ms  |  {results['cpu_jpeg_full_kb']:.1f} KB")
+    print(f"    CPU JPEG: ROI masked:   {results['cpu_jpeg_roi_ms']:.2f} ms  |  {results['cpu_jpeg_roi_kb']:.1f} KB")
 if results.get("vcu_h264_full_fps"):
     print(f"    VCU H.264 throughput:    {results['vcu_h264_full_fps']:.0f} FPS")
 if results.get("ratio_full"):

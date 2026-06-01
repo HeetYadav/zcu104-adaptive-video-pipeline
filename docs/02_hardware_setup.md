@@ -2,18 +2,10 @@
 
 ---
 
-# 02 — Hardware Setup
+# 02: Hardware Setup
 
 ## Table of Contents
-- [ZCU104 Board Overview](#zcu104-board-overview)
-- [Required Equipment](#required-equipment)
-- [Network Configuration](#network-configuration)
-- [Board Boot and SSH](#board-boot-and-ssh)
-- [IP Webcam App Setup](#ip-webcam-app-setup)
-- [Transferring Files to the Board](#transferring-files-to-the-board)
-- [Downloading the DPU Model](#downloading-the-dpu-model)
-- [Running Preflight Checks](#running-preflight-checks)
-
+- [ZCU104 Board Overview](#zcu104-board-overview)- [Required Equipment](#required-equipment)- [Network Configuration](#network-configuration)- [Board Boot and SSH](#board-boot-and-ssh)- [IP Webcam App Setup](#ip-webcam-app-setup)- [Transferring Files to the Board](#transferring-files-to-the-board)- [Downloading the DPU Model](#downloading-the-dpu-model)- [Running Preflight Checks](#running-preflight-checks)
 ---
 
 ## ZCU104 Board Overview
@@ -33,7 +25,7 @@ The Xilinx ZCU104 is an evaluation kit for the Zynq UltraScale+ MPSoC family. It
 | **Storage** | MicroSD card (boot) + eMMC |
 | **Networking** | 1 Gbps Ethernet (RJ45) |
 | **USB** | USB 3.0 + USB-UART bridge (FTDI) |
-| **OS** | PetaLinux — Vitis AI TRD 2020.2 image |
+| **OS** | PetaLinux: Vitis AI TRD 2020.2 image |
 
 > [!NOTE]
 > The **DPU** and **VCU** are both implemented in the **Programmable Logic (FPGA fabric)** of the SoC, not on the ARM CPU. This is what enables them to operate simultaneously without CPU resource contention.
@@ -50,7 +42,7 @@ The Xilinx ZCU104 is an evaluation kit for the Zynq UltraScale+ MPSoC family. It
 | USB-A to Micro-USB cable | UART console access | The FTDI port on the board |
 | Android smartphone | Camera source | Must support IP Webcam app |
 | Windows/Linux laptop | Development, SCP, VLC playback | |
-| VLC Media Player | View the live stream | Free — [videolan.org](https://www.videolan.org/) |
+| VLC Media Player | View the live stream | Free: [videolan.org](https://www.videolan.org/) |
 
 ---
 
@@ -92,16 +84,14 @@ PHONE_HOST = "192.168.2.141:8080"   # ← Change to your phone's IP
 
 1. Flash the **Vitis AI TRD 2020.2** PetaLinux image to the MicroSD card using Etcher or `dd`
 2. Insert the MicroSD card into the ZCU104
-3. Set boot mode switches to SD card boot (SW6: `1110` — check ZCU104 User Guide)
+3. Set boot mode switches to SD card boot (SW6: `1110`: check ZCU104 User Guide)
 4. Connect Ethernet
-5. Connect power — the board boots automatically
+5. Connect power: the board boots automatically
 
 ### UART Console (if SSH not available yet)
 
 Connect the USB-UART cable and use a terminal emulator (PuTTY, Minicom, screen):
-- **Baud rate:** 115200
-- **Data bits:** 8, Stop bits: 1, Parity: None
-
+- **Baud rate:** 115200- **Data bits:** 8, Stop bits: 1, Parity: None
 ```bash
 # Linux
 screen /dev/ttyUSB0 115200
@@ -128,16 +118,16 @@ The camera source is an Android phone running the **IP Webcam** app by Pavel Khl
 
 1. Install **IP Webcam** from Google Play Store (free)
 2. Open the app
-3. Scroll to the bottom — tap **"Start server"**
+3. Scroll to the bottom: tap **"Start server"**
 4. The app displays the stream URL: `http://<phone-ip>:8080`
 5. In a browser on your laptop, go to `http://<phone-ip>:8080` to verify the feed works
 6. The pipeline uses the `/shot.jpg` endpoint (JPEG snapshot polling): `http://<phone-ip>:8080/shot.jpg`
 
 > [!TIP]
-> Keep the phone plugged in (USB charging) during long runs — the screen staying on and active streaming will drain the battery quickly.
+> Keep the phone plugged in (USB charging) during long runs: the screen staying on and active streaming will drain the battery quickly.
 
 > [!NOTE]
-> The pipeline polls `/shot.jpg` rather than using `/video` (MJPEG stream). This is intentional — snapshot polling has lower latency on Wi-Fi because each request is an independent HTTP GET, while an MJPEG stream over Wi-Fi can experience chunking from the phone's output buffer.
+> The pipeline polls `/shot.jpg` rather than using `/video` (MJPEG stream). This is intentional: snapshot polling has lower latency on Wi-Fi because each request is an independent HTTP GET, while an MJPEG stream over Wi-Fi can experience chunking from the phone's output buffer.
 
 ---
 
@@ -170,7 +160,7 @@ scp -O -o HostKeyAlgorithms=+ssh-rsa ^
 ## Downloading the DPU Model
 
 > [!CAUTION]
-> The model files (`.xmodel`, `.weights`) are excluded from this repository by `.gitignore` — they are too large for GitHub. You must download them separately.
+> The model files (`.xmodel`, `.weights`) are excluded from this repository by `.gitignore`: they are too large for GitHub. You must download them separately.
 
 The pipeline uses **YOLOv4 Leaky SPP** from the Xilinx Model Zoo, pre-compiled for the ZCU104 DPU architecture.
 
@@ -205,7 +195,7 @@ python3 preflight.py
 **Expected output (all passing):**
 ```
 ============================================================
-  ZCU104 ROI Pipeline — Preflight Check
+  ZCU104 ROI Pipeline: Preflight Check
 ============================================================
 
 [1] Python packages
@@ -230,7 +220,7 @@ python3 preflight.py
 [4] GStreamer plugins
 [PASS] gst-inspect appsrc
 [PASS] gst-inspect videoconvert
-[WARN] omxh264enc (VCU) found — you CAN use hardware H.264.
+[WARN] omxh264enc (VCU) found: you CAN use hardware H.264.
 
 [5] Network
 [PASS] Ping phone (192.168.2.141)

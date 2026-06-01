@@ -1,5 +1,5 @@
 """
-Telemetry — §2 Per-Zone Byte Measurement
+Telemetry: §2 Per-Zone Byte Measurement
 =========================================
 Measures JPEG-compressed byte size of each zone independently.
 Quantifies the compression benefit of zone 2 downsampling.
@@ -12,7 +12,7 @@ def measure_zone_bytes(frame, ax, ay, aw, ah,
                        rx, ry, rw, rh, jpeg_quality=85):
     """
     Encode each zone crop independently to count compressed bytes.
-    This is measurement only — not used for actual output encoding.
+    This is measurement only: not used for actual output encoding.
 
     Returns:
         (z1_bytes, z2_bytes, z3_bytes_per_200px)

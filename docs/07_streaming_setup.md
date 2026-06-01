@@ -2,22 +2,15 @@
 
 ---
 
-# 07 — Streaming Setup
+# 07: Streaming Setup
 
 ## Table of Contents
-- [Starting the Pipeline](#starting-the-pipeline)
-- [Opening in VLC](#opening-in-vlc)
-- [Opening in a Web Browser](#opening-in-a-web-browser)
-- [VLC Settings for Low Latency](#vlc-settings-for-low-latency)
-- [URL Reference](#url-reference)
-- [What You Should See](#what-you-should-see)
-- [Stopping the Pipeline](#stopping-the-pipeline)
-
+- [Starting the Pipeline](#starting-the-pipeline)- [Opening in VLC](#opening-in-vlc)- [Opening in a Web Browser](#opening-in-a-web-browser)- [VLC Settings for Low Latency](#vlc-settings-for-low-latency)- [URL Reference](#url-reference)- [What You Should See](#what-you-should-see)- [Stopping the Pipeline](#stopping-the-pipeline)
 ---
 
 ## Starting the Pipeline
 
-### Step 1 — Verify everything is ready
+### Step 1: Verify everything is ready
 
 ```bash
 # On the board
@@ -26,13 +19,13 @@ python3 preflight.py
 
 All checks must pass before proceeding.
 
-### Step 2 — Start the pipeline
+### Step 2: Start the pipeline
 
 ```bash
-# Phase 3 — Full Hardware (DPU + VCU): recommended
+# Phase 3: Full Hardware (DPU + VCU): recommended
 python3 pipeline_hw.py
 
-# Phase 3 Baseline — DPU + MJPEG (no VCU):
+# Phase 3 Baseline: DPU + MJPEG (no VCU):
 python3 pipeline_hw_1.py
 ```
 
@@ -46,7 +39,7 @@ python3 pipeline_hw_1.py
 [Compositor] VCU hardware encoder ready (Telemetry Mode).
 [Compositor] Starting MJPEG stream for visualization on port 5000...
 ============================================================
-  ROI Pipeline  [DPU + VCU Hardware — Full Acceleration]
+  ROI Pipeline  [DPU + VCU Hardware: Full Acceleration]
   Input  ← http://192.168.2.141:8080/shot.jpg
   Output → http://<board-ip>:5000/stream
 ============================================================
@@ -55,7 +48,7 @@ python3 pipeline_hw_1.py
 The pipeline is ready when you see the `============` footer.
 
 > [!NOTE]
-> The DRM log lines like `[drm] Pid 5331 opened device` are **normal** — they come from the Linux DRM subsystem as the DPU firmware loads the XCLBIN bitstream. They print to console but do not affect operation.
+> The DRM log lines like `[drm] Pid 5331 opened device` are **normal**: they come from the Linux DRM subsystem as the DPU firmware loads the XCLBIN bitstream. They print to console but do not affect operation.
 
 ---
 
@@ -73,7 +66,7 @@ The pipeline is ready when you see the `============` footer.
 4. Click **Play**
 
 > [!TIP]
-> Set VLC's network cache to **150 ms** for the smoothest playback — see [VLC Settings for Low Latency](#vlc-settings-for-low-latency) below.
+> Set VLC's network cache to **150 ms** for the smoothest playback: see [VLC Settings for Low Latency](#vlc-settings-for-low-latency) below.
 
 ---
 
@@ -113,7 +106,7 @@ After changing the setting, you must **restart VLC** for it to take effect. The 
 
 | URL | Description |
 |-----|-------------|
-| `http://<board-ip>:5000/stream` | **Main stream** — MJPEG with zone overlay |
+| `http://<board-ip>:5000/stream` | **Main stream**: MJPEG with zone overlay |
 | `http://<board-ip>:5000/` | Alias for `/stream` |
 | `http://<board-ip>:8080/shot.jpg` | Phone camera snapshot (not the pipeline output) |
 
@@ -125,11 +118,7 @@ After changing the setting, you must **restart VLC** for it to take effect. The 
 
 When working correctly:
 
-- **Background** — pure black (Zone 3)
-- **Around each detected person** — a solid **green rectangle** labeled `Z1` (Zone 1 — full resolution)
-- **Surrounding the green rectangle** — a dashed **amber rectangle** labeled `Z2` (Zone 2 — half resolution)
-- **Terminal** — `[Detector]` lines showing detected person count, and `[Telemetry]` lines every 30 frames showing bandwidth and FPS
-
+- **Background**: pure black (Zone 3)- **Around each detected person**: a solid **green rectangle** labeled `Z1` (Zone 1: full resolution)- **Surrounding the green rectangle**: a dashed **amber rectangle** labeled `Z2` (Zone 2: half resolution)- **Terminal**: `[Detector]` lines showing detected person count, and `[Telemetry]` lines every 30 frames showing bandwidth and FPS
 Example telemetry output:
 ```
 [Detector] 2 person(s) detected

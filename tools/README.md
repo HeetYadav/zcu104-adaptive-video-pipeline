@@ -8,9 +8,9 @@ Utility scripts for setup, verification, and benchmarking. These are **not part 
 
 | Tool | Folder | Purpose |
 |------|--------|---------|
-| [`preflight/`](preflight/) | `preflight.py` | Pre-run hardware check — verifies all dependencies before starting a pipeline |
+| [`preflight/`](preflight/) | `preflight.py` | Pre-run hardware check: verifies all dependencies before starting a pipeline |
 | [`benchmark/`](benchmark/) | `benchmark.py`, `realBenchmark.py` | Hardware performance measurement and automated pipeline comparison |
-| [`laptop_cam_server/`](laptop_cam_server/) | `laptop_cam_server.py` | Alternative camera source — serves laptop webcam over HTTP if no phone is available |
+| [`laptop_cam_server/`](laptop_cam_server/) | `laptop_cam_server.py` | Alternative camera source: serves laptop webcam over HTTP if no phone is available |
 
 ## Recommended Workflow
 

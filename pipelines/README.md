@@ -10,8 +10,8 @@ This folder contains the two runnable pipeline entry points. Run them directly o
 
 | Pipeline | Folder | Hardware Used | Purpose |
 |----------|--------|--------------|---------|
-| **`pipeline_hw.py`** | [`pipeline_hw/`](pipeline_hw/) | DPU + VCU (Full HW) | ✅ **Primary** — production pipeline with hardware H.264 telemetry |
-| **`pipeline_hw_1.py`** | [`pipeline_hw_1/`](pipeline_hw_1/) | DPU only | 📊 **Benchmark baseline** — DPU inference with MJPEG output |
+| **`pipeline_hw.py`** | [`pipeline_hw/`](pipeline_hw/) | DPU + VCU (Full HW) | ✅ **Primary**: production pipeline with hardware H.264 telemetry |
+| **`pipeline_hw_1.py`** | [`pipeline_hw_1/`](pipeline_hw_1/) | DPU only | 📊 **Benchmark baseline**: DPU inference with MJPEG output |
 
 ## Quick Commands
 

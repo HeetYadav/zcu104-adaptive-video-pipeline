@@ -2,16 +2,10 @@
 
 ---
 
-# 08 — Benchmark Results
+# 08: Benchmark Results
 
 ## Table of Contents
-- [How the Benchmark Works](#how-the-benchmark-works)
-- [Methodology](#methodology)
-- [Results](#results)
-- [Bandwidth Savings Analysis](#bandwidth-savings-analysis)
-- [Understanding the Telemetry Format](#understanding-the-telemetry-format)
-- [Reproducing the Results](#reproducing-the-results)
-
+- [How the Benchmark Works](#how-the-benchmark-works)- [Methodology](#methodology)- [Results](#results)- [Bandwidth Savings Analysis](#bandwidth-savings-analysis)- [Understanding the Telemetry Format](#understanding-the-telemetry-format)- [Reproducing the Results](#reproducing-the-results)
 ---
 
 ## How the Benchmark Works
@@ -20,7 +14,7 @@
 
 1. **Starts** `pipeline_hw_1.py` (MJPEG baseline) as a subprocess
 2. **Waits** 4 seconds for the DPU model to load and HTTP server to start
-3. **Simulates** a VLC client by opening `http://127.0.0.1:5000/stream` locally (this is required — without an active client, the MJPEG server doesn't push frames)
+3. **Simulates** a VLC client by opening `http://127.0.0.1:5000/stream` locally (this is required: without an active client, the MJPEG server doesn't push frames)
 4. **Collects** `[Telemetry]` lines from the pipeline's stdout for **15 seconds**
 5. **Kills** the pipeline cleanly (`SIGKILL` to the entire process group)
 6. **Repeats** steps 1–5 for `pipeline_hw.py` (VCU H.264 pipeline)
@@ -51,7 +45,7 @@ def benchmark_pipeline(script_name, duration=15):
 | Camera source | Android phone, IP Webcam app, same Wi-Fi network |
 
 > [!NOTE]
-> The benchmark runs both pipelines **sequentially** on the same hardware, with the same camera feed, within seconds of each other. This makes the comparison as fair as possible — scene content, lighting, and network conditions are nearly identical for both measurements.
+> The benchmark runs both pipelines **sequentially** on the same hardware, with the same camera feed, within seconds of each other. This makes the comparison as fair as possible: scene content, lighting, and network conditions are nearly identical for both measurements.
 
 ---
 
@@ -86,7 +80,7 @@ def benchmark_pipeline(script_name, duration=15):
 |--------|-------------------------------------|---------------------------------------|-----------|
 | Average Bandwidth | 8821.1 kbps | 841.4 kbps | **90.5%** |
 | Average Framerate | 8.6 FPS | 9.5 FPS | **(+10%)** |
-| Bandwidth Ratio | 1.0× (baseline) | 10.5× lower | — |
+| Bandwidth Ratio | 1.0× (baseline) | 10.5× lower |: |
 
 ### Bandwidth Chart
 
@@ -105,10 +99,7 @@ xychart-beta
 ### Why MJPEG Bandwidth Varies
 
 MJPEG compresses each frame independently as a JPEG. Bandwidth scales almost linearly with scene complexity:
-- Empty room: ~3,000–4,000 kbps (low texture background)
-- 1 person: ~5,000–7,000 kbps (person adds complex texture)
-- 2 persons: ~7,000–9,000 kbps (more complex regions)
-
+- Empty room: ~3,000–4,000 kbps (low texture background)- 1 person: ~5,000–7,000 kbps (person adds complex texture)- 2 persons: ~7,000–9,000 kbps (more complex regions)
 ### Why VCU H.264 + ROI Bandwidth is Much Lower
 
 Three compounding factors:
@@ -123,11 +114,11 @@ The proximity ring is spatially downsampled before encoding. Fewer unique pixel 
 
 **3. H.264 inter-frame prediction**
 
-H.264 uses motion vectors to encode the difference between frames rather than full frames. MJPEG encodes every frame from scratch. Between consecutive frames where the person hasn't moved much, the P-frame difference is tiny — almost zero bits.
+H.264 uses motion vectors to encode the difference between frames rather than full frames. MJPEG encodes every frame from scratch. Between consecutive frames where the person hasn't moved much, the P-frame difference is tiny: almost zero bits.
 
 ### Theoretical Minimum (Empty Scene)
 
-When no person is detected, the compositor outputs the **original full frame** (not masked). This is intentional — we don't want to hide potential threats by blanking the feed when nobody is detected.
+When no person is detected, the compositor outputs the **original full frame** (not masked). This is intentional: we don't want to hide potential threats by blanking the feed when nobody is detected.
 
 > [!TIP]
 > If you want to measure the absolute maximum compression efficiency, run a test where the camera points at an empty room for the entire 15 seconds. You should see bandwidth approach the `base_overhead` value of ~120 kbps.

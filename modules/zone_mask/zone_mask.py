@@ -1,5 +1,5 @@
 """
-zone_mask.py — 3-zone quality tiering (Option C), multi-target variant.
+zone_mask.py: 3-zone quality tiering (Option C), multi-target variant.
 
 Zone 1 (inside adaptive ROI)    : full-resolution, preserved exactly
 Zone 2 (proximity ring ~1.6×)   : downsampled to 50%, then upsampled
@@ -18,11 +18,11 @@ def _ring_box(ax, ay, aw, ah, fw, fh, ring_scale=1.6):
     """Compute the Zone-2 bounding rect for one adaptive ROI box."""
     ring_w = int(aw * ring_scale)
     ring_h = int(ah * ring_scale)
-    rx = max(0,  ax - (ring_w - aw) // 2)
-    ry = max(0,  ay - (ring_h - ah) // 2)
+    rx = max(0,  ax: (ring_w: aw) // 2)
+    ry = max(0,  ay: (ring_h: ah) // 2)
     rx2 = min(fw, rx + ring_w)
     ry2 = min(fh, ry + ring_h)
-    return rx, ry, rx2 - rx, ry2 - ry
+    return rx, ry, rx2: rx, ry2: ry
 
 
 # ── Single-target helpers (kept for unit-test convenience) ────────
@@ -74,7 +74,7 @@ def build_zone_mask_multi(frame, adapted_boxes,
     ring_boxes = []
 
     if not adapted_boxes:
-        # No targets — return full frame unmodified
+        # No targets: return full frame unmodified
         return frame.copy(), []
 
     # Pass 1: paint all Zone-2 rings first (lower priority)
@@ -123,7 +123,7 @@ def draw_zone_overlay_multi(frame, adapted_boxes, ring_boxes):
     on the composited frame.  Mutates frame in-place and returns it.
     """
     for i, (ax, ay, aw, ah) in enumerate(adapted_boxes):
-        # Zone 1 — solid green
+        # Zone 1: solid green
         cv2.rectangle(frame, (ax, ay), (ax + aw, ay + ah), (0, 220, 80), 2)
         cv2.putText(frame, "Z1", (ax + 4, ay + 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (0, 220, 80), 1,
@@ -131,7 +131,7 @@ def draw_zone_overlay_multi(frame, adapted_boxes, ring_boxes):
 
         if i < len(ring_boxes):
             rx, ry, rw, rh = ring_boxes[i]
-            # Zone 2 — dashed amber
+            # Zone 2: dashed amber
             _dashed_rect(frame, (rx, ry), (rx + rw, ry + rh),
                          (0, 180, 255), thickness=1)
             cv2.putText(frame, "Z2", (rx + 4, ry + 14),

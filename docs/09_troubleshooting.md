@@ -2,23 +2,13 @@
 
 ---
 
-# 09 — Troubleshooting
+# 09: Troubleshooting
 
 Every hard-won fix from development. Each issue follows a consistent structure: **Symptom → Root Cause → Fix → Prevention**.
 
 ## Table of Contents
 
-- [xir::DataType::UNKNOWN Crash](#xirdatatypeunknown-crash)
-- [OSError: Address already in use](#oserror-address-already-in-use)
-- [DPU Resource Lock — "Waiting for process to release"](#dpu-resource-lock)
-- [DRM Log Flooding the Terminal](#drm-log-flooding)
-- [VLC Shows Black Screen](#vlc-shows-black-screen)
-- [Pipeline Output is Choppy (Pause → Fast-Forward → Pause)](#choppy-output)
-- [Benchmark Reports 0.0 kbps / 0.0 FPS](#benchmark-reports-00)
-- [SCP Transfer Fails — Host Key Rejected](#scp-transfer-fails)
-- [Phone Camera Feed Not Connecting](#phone-camera-feed-not-connecting)
-- [VCU GStreamer Pipeline Failed to Open](#vcu-gstreamer-pipeline-failed)
-
+- [xir::DataType::UNKNOWN Crash](#xirdatatypeunknown-crash)- [OSError: Address already in use](#oserror-address-already-in-use)- [DPU Resource Lock: "Waiting for process to release"](#dpu-resource-lock)- [DRM Log Flooding the Terminal](#drm-log-flooding)- [VLC Shows Black Screen](#vlc-shows-black-screen)- [Pipeline Output is Choppy (Pause → Fast-Forward → Pause)](#choppy-output)- [Benchmark Reports 0.0 kbps / 0.0 FPS](#benchmark-reports-00)- [SCP Transfer Fails: Host Key Rejected](#scp-transfer-fails)- [Phone Camera Feed Not Connecting](#phone-camera-feed-not-connecting)- [VCU GStreamer Pipeline Failed to Open](#vcu-gstreamer-pipeline-failed)
 ---
 
 <details>
@@ -42,14 +32,12 @@ The `.xmodel` declares its input tensor type as `INT8` (signed, -128 to +127). W
 Change the preprocessing to subtract 128 and cast to `int8`:
 
 ```diff
-- img_data = rgb.astype(np.uint8)
-- input_tensor_data[0] = img_data
-
-+ img_int8 = (rgb.astype(np.int16) - 128).astype(np.int8)
+- img_data = rgb.astype(np.uint8)- input_tensor_data[0] = img_data
++ img_int8 = (rgb.astype(np.int16): 128).astype(np.int8)
 + input_tensor_data[0] = img_int8
 ```
 
-Cast to `int16` *before* subtracting 128 to prevent uint8 underflow (0 - 128 would overflow if you subtract in uint8 space).
+Cast to `int16` *before* subtracting 128 to prevent uint8 underflow (0: 128 would overflow if you subtract in uint8 space).
 
 **Prevention**
 
@@ -92,7 +80,7 @@ Or for `HTTPServer`:
 HTTPServer.allow_reuse_address = True
 ```
 
-If you still get this error, wait 5 seconds and try again — the kernel's `TIME_WAIT` window will have expired.
+If you still get this error, wait 5 seconds and try again: the kernel's `TIME_WAIT` window will have expired.
 
 **Prevention**
 
@@ -103,7 +91,7 @@ Always use `allow_reuse_address = True` for any server that might be restarted f
 ---
 
 <details>
-<summary><strong>DPU Resource Lock — "Waiting for process to release"</strong></summary>
+<summary><strong>DPU Resource Lock: "Waiting for process to release"</strong></summary>
 
 **Symptom**
 
@@ -119,10 +107,7 @@ The pipeline hangs at this line indefinitely.
 Only one process can hold the DPU resource at a time. The previous pipeline (PID 5331) was killed but the DPU resource lock file (`/tmp/vart_device_0`) was not cleaned up before the new process (PID 5348) started.
 
 This happens when:
-- The previous `python3 pipeline_hw.py` was killed with `SIGKILL` (instant kill, no cleanup)
-- The previous run crashed without releasing the DPU
-- `realBenchmark.py` killed the first pipeline and the second started before the OS fully released the resource
-
+- The previous `python3 pipeline_hw.py` was killed with `SIGKILL` (instant kill, no cleanup)- The previous run crashed without releasing the DPU- `realBenchmark.py` killed the first pipeline and the second started before the OS fully released the resource
 **Fix**
 
 Kill all remaining Python processes and delete the lock file:
@@ -157,7 +142,7 @@ The terminal is flooded with lines like:
 
 **Root Cause**
 
-These are **kernel log messages** from the `zocl` DRM driver — the Linux kernel module that manages access to the FPGA fabric (XCLBIN bitstream loading, DPU resource arbitration). They print to the kernel ring buffer and appear in the console because the ZCU104 PetaLinux image has `printk` console logging enabled.
+These are **kernel log messages** from the `zocl` DRM driver: the Linux kernel module that manages access to the FPGA fabric (XCLBIN bitstream loading, DPU resource arbitration). They print to the kernel ring buffer and appear in the console because the ZCU104 PetaLinux image has `printk` console logging enabled.
 
 **These messages are harmless.** They confirm the DPU bitstream is loading and the resource lock is being managed correctly.
 
@@ -211,7 +196,7 @@ http://<board-ip>:5000/video    ← wrong path
 
 **Root Cause (second most common: pipeline not running)**
 
-Check the board terminal — the pipeline may have crashed silently.
+Check the board terminal: the pipeline may have crashed silently.
 
 **Fix**
 
@@ -250,13 +235,13 @@ This was caused by the MPEG-TS container format during earlier development attem
 
 **Fix**
 
-The current pipeline does **not** use MPEG-TS. It serves raw MJPEG over multipart HTTP, which has no embedded timestamps. VLC renders MJPEG frames as they arrive — no buffering logic.
+The current pipeline does **not** use MPEG-TS. It serves raw MJPEG over multipart HTTP, which has no embedded timestamps. VLC renders MJPEG frames as they arrive: no buffering logic.
 
 If you've accidentally switched back to MPEG-TS (e.g., re-added `mpegtsmux` to `GST_OUT`), revert to the current `fakesink` approach.
 
 **Prevention**
 
-Do not add `mpegtsmux`, `mp4mux`, or any container muxer to `GST_OUT`. The VCU pipeline uses `fakesink` — the H.264 output is for telemetry calculation, not for streaming.
+Do not add `mpegtsmux`, `mp4mux`, or any container muxer to `GST_OUT`. The VCU pipeline uses `fakesink`: the H.264 output is for telemetry calculation, not for streaming.
 
 </details>
 
@@ -279,7 +264,7 @@ The pipeline may have thrown an exception in the first 4 seconds (during initial
 
 **Fix**
 
-Run `realBenchmark.py` and watch the indented output lines carefully — they now show ALL pipeline output, including tracebacks. Look for error messages.
+Run `realBenchmark.py` and watch the indented output lines carefully: they now show ALL pipeline output, including tracebacks. Look for error messages.
 
 **Root Cause 2: Phone camera not reachable**
 
@@ -308,7 +293,7 @@ Always run `python3 preflight.py` before the benchmark. Preflight verifies the p
 ---
 
 <details>
-<summary><strong>SCP Transfer Fails — Host Key Rejected</strong></summary>
+<summary><strong>SCP Transfer Fails: Host Key Rejected</strong></summary>
 
 **Symptom**
 
@@ -357,11 +342,7 @@ The pipeline starts but prints repeated connection errors, or the stream shows a
 **Root Cause**
 
 One of:
-- IP Webcam app is not running on the phone
-- Phone screen is off (some Android versions suspend background apps when screen is off)
-- Phone IP address changed (DHCP reassigned)
-- Phone and board are on different subnets
-
+- IP Webcam app is not running on the phone- Phone screen is off (some Android versions suspend background apps when screen is off)- Phone IP address changed (DHCP reassigned)- Phone and board are on different subnets
 **Fix**
 
 1. On your phone: open IP Webcam, ensure the server is running (you'll see the URL and FPS counter)
@@ -397,10 +378,7 @@ Or `vcu_writer.isOpened()` returns `False`.
 **Root Cause**
 
 The GStreamer pipeline string in `GST_OUT` failed to initialize. Common causes:
-- `omxh264enc` plugin is not installed
-- `videoconvert` plugin is missing
-- The bitstream loaded on the FPGA does not include the VCU IP core
-
+- `omxh264enc` plugin is not installed- `videoconvert` plugin is missing- The bitstream loaded on the FPGA does not include the VCU IP core
 **Fix**
 
 Run the preflight check:

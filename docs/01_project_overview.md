@@ -2,15 +2,10 @@
 
 ---
 
-# 01 — Project Overview
+# 01: Project Overview
 
 ## Table of Contents
-- [The Problem](#the-problem)
-- [The Hypothesis](#the-hypothesis)
-- [Why FPGA?](#why-fpga)
-- [Project Evolution](#project-evolution)
-- [Key Results](#key-results)
-
+- [The Problem](#the-problem)- [The Hypothesis](#the-hypothesis)- [Why FPGA?](#why-fpga)- [Project Evolution](#project-evolution)- [Key Results](#key-results)
 ---
 
 ## The Problem
@@ -19,7 +14,7 @@ Modern surveillance, robotics, and edge-vision systems face a fundamental tensio
 
 A 1080p camera streaming uncompressed video generates approximately **1.5 Gbps**. Even compressed MJPEG at moderate quality outputs **4,000–8,000 kbps** depending on scene complexity. On embedded systems where multiple cameras share a single network link, this is unsustainable.
 
-The naive solution — simply compress harder — destroys image quality in the regions where it matters most: around the people and objects being monitored.
+The naive solution: simply compress harder: destroys image quality in the regions where it matters most: around the people and objects being monitored.
 
 **The real question is:** *Can we compress the background without touching the foreground?*
 
@@ -32,7 +27,7 @@ The naive solution — simply compress harder — destroys image quality in the 
 This hypothesis has three sub-claims:
 
 1. **Detection accuracy:** A YOLOv4 model running on dedicated AI hardware (the DPU) can detect persons reliably enough in real-time to drive the masking decision
-2. **Compression physics:** An H.264 encoder in VBR mode, presented with large areas of pure black (`0x000000`), will reduce its bitrate proportionally — black pixels compress to near-zero because they produce zero DCT coefficients
+2. **Compression physics:** An H.264 encoder in VBR mode, presented with large areas of pure black (`0x000000`), will reduce its bitrate proportionally: black pixels compress to near-zero because they produce zero DCT coefficients
 3. **Hardware feasibility:** The DPU (AI inference) and VCU (H.264 encoding) on the ZCU104 can both operate simultaneously, with the ARM CPU handling only the orchestration logic
 
 All three claims are validated experimentally in this project.
@@ -53,7 +48,7 @@ The answer is **latency, power, and deployment scenario**.
 | Cost | High ($$$) | Moderate |
 | Deployment | Data center | Edge device, weather-hardened |
 
-The ZCU104 is an **edge device** — it sits next to the camera, processes the video locally, and only sends the bandwidth-reduced stream downstream.
+The ZCU104 is an **edge device**: it sits next to the camera, processes the video locally, and only sends the bandwidth-reduced stream downstream.
 
 Furthermore, the ZCU104's **DPU** (Deep Learning Processing Unit) is a dedicated INT8 matrix-multiply engine burned into the FPGA fabric. It runs YOLOv4 inference at a fraction of the power cost of even a small GPU.
 
@@ -63,25 +58,12 @@ Furthermore, the ZCU104's **DPU** (Deep Learning Processing Unit) is a dedicated
 
 The project is organized around two key pipelines, representing the baseline and the final hardware-accelerated solution:
 
-### Baseline — `pipeline_hw_1.py` (DPU Inference)
+### Baseline: `pipeline_hw_1.py` (DPU Inference)
 
-- **Inference:** YOLOv4 on the DPU (FPGA fabric) via Vitis AI Runtime (`vart`)
-- **Encoding:** MJPEG (CPU-based)
-- **Output:** MJPEG HTTP stream on port 5000
-- **Bandwidth:** ~6,000–8,000 kbps (MJPEG is uncompressed)
-- **CPU load:** Moderate — CPU handles the compositor and HTTP server
-- **Key achievement:** Proves the DPU can run YOLOv4 reliably and feed bounding boxes to the compositor in real-time
+- **Inference:** YOLOv4 on the DPU (FPGA fabric) via Vitis AI Runtime (`vart`)- **Encoding:** MJPEG (CPU-based)- **Output:** MJPEG HTTP stream on port 5000- **Bandwidth:** ~6,000–8,000 kbps (MJPEG is uncompressed)- **CPU load:** Moderate: CPU handles the compositor and HTTP server- **Key achievement:** Proves the DPU can run YOLOv4 reliably and feed bounding boxes to the compositor in real-time
+### Final: `pipeline_hw.py` (Full Hardware Acceleration)
 
-### Final — `pipeline_hw.py` (Full Hardware Acceleration)
-
-- **Inference:** YOLOv4 on DPU (unchanged from Baseline)
-- **Encoding:** VCU hardware H.264 encoder (`omxh264enc`) via GStreamer — runs on dedicated silicon in the FPGA PL, zero CPU cycles
-- **Visualization:** MJPEG stream (smooth, immediate, parallel to VCU encoding)
-- **Telemetry:** VCU H.264 bandwidth calculated from active pixel area ratio
-- **Output:** MJPEG HTTP stream on port 5000 (view in VLC), H.264 telemetry in terminal
-- **Bandwidth (H.264 equivalent):** ~120–700 kbps depending on how many persons are in frame
-- **CPU load:** Minimal — CPU handles only Python thread coordination
-
+- **Inference:** YOLOv4 on DPU (unchanged from Baseline)- **Encoding:** VCU hardware H.264 encoder (`omxh264enc`) via GStreamer: runs on dedicated silicon in the FPGA PL, zero CPU cycles- **Visualization:** MJPEG stream (smooth, immediate, parallel to VCU encoding)- **Telemetry:** VCU H.264 bandwidth calculated from active pixel area ratio- **Output:** MJPEG HTTP stream on port 5000 (view in VLC), H.264 telemetry in terminal- **Bandwidth (H.264 equivalent):** ~120–700 kbps depending on how many persons are in frame- **CPU load:** Minimal: CPU handles only Python thread coordination
 ---
 
 ## Key Results

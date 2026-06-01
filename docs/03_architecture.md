@@ -2,16 +2,10 @@
 
 ---
 
-# 03 — System Architecture
+# 03: System Architecture
 
 ## Table of Contents
-- [High-Level Block Diagram](#high-level-block-diagram)
-- [Thread Model](#thread-model)
-- [Inter-Thread Data Flow (Sequence Diagram)](#inter-thread-data-flow)
-- [Thread Synchronization](#thread-synchronization)
-- [GStreamer Pipeline String](#gstreamer-pipeline-string)
-- [Memory and Lock Architecture](#memory-and-lock-architecture)
-
+- [High-Level Block Diagram](#high-level-block-diagram)- [Thread Model](#thread-model)- [Inter-Thread Data Flow (Sequence Diagram)](#inter-thread-data-flow)- [Thread Synchronization](#thread-synchronization)- [GStreamer Pipeline String](#gstreamer-pipeline-string)- [Memory and Lock Architecture](#memory-and-lock-architecture)
 ---
 
 ## High-Level Block Diagram
@@ -22,7 +16,7 @@ block-beta
 
   Phone(["📱 IP Webcam App\nHTTP /shot.jpg\n192.168.2.141:8080"])
 
-  block:PS["Processing System — ARM Cortex-A53"]:2
+  block:PS["Processing System: ARM Cortex-A53"]:2
     columns 2
     Grabber["🔄 Thread 1\nGrabber\nHTTP GET /shot.jpg\nDecodes JPEG → BGR\n~30 FPS"]
     Compositor["🖼️ Thread 3\nCompositor\nZone masking\nMJPEG encode\nVCU write\n30 FPS paced"]
@@ -30,7 +24,7 @@ block-beta
     HTTP["📡 Thread 4\nHTTP Server\nMJPEG multipart\nport 5000"]
   end
 
-  block:PL["Programmable Logic — FPGA Fabric"]:3
+  block:PL["Programmable Logic: FPGA Fabric"]:3
     DPU["🧠 DPU B4096\nYOLOv4 INT8\nHW inference"]
     VCU["🎬 VCU\nomxh264enc\nHW H.264 encode"]
     space
@@ -65,7 +59,7 @@ The pipeline runs four concurrent Python threads. Each thread has a single, focu
 > [!NOTE]
 > The **DPU** and **VCU** are hardware accelerators invoked *from* the ARM threads, not separate threads themselves. The DPU is called synchronously inside `detector_thread`, and the VCU is written to inside `compositor_thread` via OpenCV's GStreamer backend.
 
-### Thread 1 — Grabber
+### Thread 1: Grabber
 
 **Responsibility:** Keep `_grab_frame` fresh with the latest camera frame.
 
@@ -75,10 +69,10 @@ while True:
     decode JPEG bytes → numpy BGR array
     acquire _grab_lock → write _grab_frame
     release _grab_lock
-    (no sleep — runs as fast as network allows)
+    (no sleep: runs as fast as network allows)
 ```
 
-### Thread 2 — Detector
+### Thread 2: Detector
 
 **Responsibility:** Run YOLOv4 inference on the DPU and keep `_faces` updated.
 
@@ -93,7 +87,7 @@ while True:
     write _faces (under _faces_lock)
 ```
 
-### Thread 3 — Compositor
+### Thread 3: Compositor
 
 **Responsibility:** At exactly 30 FPS, composite the frame using the zone mask, push to VCU, encode to MJPEG for the HTTP server.
 
@@ -108,10 +102,10 @@ while True:
     write to VCU via vcu_writer.write(out)    ← hardware H.264 encode
     cv2.imencode('.jpg', out) → MJPEG bytes
     write to _out_frame (under _out_lock)     ← HTTP server reads this
-    sleep(frame_time - elapsed)               ← pace to 30 FPS
+    sleep(frame_time: elapsed)               ← pace to 30 FPS
 ```
 
-### Thread 4 — HTTP Server
+### Thread 4: HTTP Server
 
 **Responsibility:** Serve the MJPEG multipart stream to any connected client (VLC, browser).
 
@@ -197,7 +191,7 @@ Three shared memory locations, each protected by a dedicated lock:
 > All locks use `threading.Lock()` (non-reentrant). Acquisitions are always short (just a pointer swap), so there is no realistic deadlock risk. The Compositor reads `_grab_frame` and `_faces` in separate, non-overlapping lock windows.
 
 > [!WARNING]
-> Never hold `_grab_lock` and `_faces_lock` simultaneously — even though no current code does this, it would create a potential deadlock if Grabber and Detector ever need to take them in opposite order.
+> Never hold `_grab_lock` and `_faces_lock` simultaneously: even though no current code does this, it would create a potential deadlock if Grabber and Detector ever need to take them in opposite order.
 
 ---
 
@@ -211,11 +205,11 @@ appsrc ! videoconvert ! video/x-raw,format=NV12 ! omxh264enc control-rate=variab
 
 | Element | What it does | Key Parameters | Why it's here |
 |---------|-------------|---------------|---------------|
-| `appsrc` | Accepts raw frame data pushed from Python (`cv2.VideoWriter.write()`) | *(none)* | Entry point — bridges Python → GStreamer |
+| `appsrc` | Accepts raw frame data pushed from Python (`cv2.VideoWriter.write()`) | *(none)* | Entry point: bridges Python → GStreamer |
 | `videoconvert` | Converts the frame's color space | *(auto-detects)* | OpenCV outputs BGR; the VCU encoder requires NV12 (planar YUV 4:2:0) |
-| `video/x-raw,format=NV12` | Caps filter — enforces NV12 output from videoconvert | `format=NV12` | Tells the next element exactly what pixel format to expect |
-| `omxh264enc` | **The VCU Hardware H.264 Encoder.** Runs on dedicated silicon, zero CPU. | `control-rate=variable` — Variable Bitrate mode<br/>`target-bitrate=1500` — 1500 kbps target | The entire point of the pipeline — hardware H.264 with VBR that naturally drops bandwidth for black regions |
-| `fakesink` | Discards the encoded H.264 bytes | `sync=false` — don't pace to clock | We are using VCU encoding for telemetry (bandwidth measurement), not for streaming. Smooth visualization is served as MJPEG via the HTTP server. |
+| `video/x-raw,format=NV12` | Caps filter: enforces NV12 output from videoconvert | `format=NV12` | Tells the next element exactly what pixel format to expect |
+| `omxh264enc` | **The VCU Hardware H.264 Encoder.** Runs on dedicated silicon, zero CPU. | `control-rate=variable`: Variable Bitrate mode<br/>`target-bitrate=1500`: 1500 kbps target | The entire point of the pipeline: hardware H.264 with VBR that naturally drops bandwidth for black regions |
+| `fakesink` | Discards the encoded H.264 bytes | `sync=false`: don't pace to clock | We are using VCU encoding for telemetry (bandwidth measurement), not for streaming. Smooth visualization is served as MJPEG via the HTTP server. |
 
 > [!NOTE]
 > `sync=false` on `fakesink` is critical. Without it, GStreamer tries to pace the output to a presentation clock, which introduces exactly the batching/buffering delays that caused the "pause → fast-forward → pause" problem during earlier development.

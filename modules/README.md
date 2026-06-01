@@ -8,7 +8,7 @@ Reusable algorithm modules shared across all three pipelines. Each module has a 
 
 | Module | File | What it does |
 |--------|------|-------------|
-| [`zone_mask/`](zone_mask/) | `zone_mask.py` | 3-zone spatial masking — builds the black-background output frame |
+| [`zone_mask/`](zone_mask/) | `zone_mask.py` | 3-zone spatial masking: builds the black-background output frame |
 | [`adaptive_roi/`](adaptive_roi/) | `adaptive_roi.py` | Motion-predictive bounding box expansion |
 | [`tracker/`](tracker/) | `tracker.py` | Centroid tracker with exponential-weighted velocity smoothing |
 | [`telemetry/`](telemetry/) | `telemetry.py` | Per-zone JPEG byte measurement for compression analysis |
@@ -27,7 +27,7 @@ pipeline.py (Phase 2)
     ├── zone_mask.py
     ├── adaptive_roi.py
     ├── tracker.py
-    └── telemetry.py      (measure_zone_bytes — Phase 2 only)
+    └── telemetry.py      (measure_zone_bytes: Phase 2 only)
 ```
 
 ## Import Path

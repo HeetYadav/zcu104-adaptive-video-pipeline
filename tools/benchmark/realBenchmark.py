@@ -112,14 +112,14 @@ def benchmark_pipeline(script_name, duration=15):
         with open(log_file) as f:
             all_lines = f.readlines()
         n_lines = len(all_lines)
-        print(f"[Tester] Pipeline log ({n_lines} lines) — last 10:")
+        print(f"[Tester] Pipeline log ({n_lines} lines): last 10:")
         for l in all_lines[-10:]:
             print("    " + l.rstrip())
     except Exception:
         pass
 
     if oom_detected:
-        print("\n[Tester] *** OOM KILL DETECTED — Not enough RAM ***")
+        print("\n[Tester] *** OOM KILL DETECTED: Not enough RAM ***")
 
     avg_kbps = sum(kbps_list) / len(kbps_list) if kbps_list else 0.0
     avg_fps  = sum(fps_list)  / len(fps_list)  if fps_list  else 0.0
@@ -158,22 +158,22 @@ if __name__ == "__main__":
 
     print("\n[1] Hardware DPU + MJPEG Pipeline (pipeline_hw_1.py)")
     if oom_1:
-        print("    *** FAILED — OOM killed during DPU model load ***")
+        print("    *** FAILED: OOM killed during DPU model load ***")
     elif kbps_1 == 0:
         print("    Average Bandwidth:      0.0 kbps")
         print("    Average Framerate:      0.0 FPS")
-        print("    (No [Telemetry] lines seen — check phone connection)")
+        print("    (No [Telemetry] lines seen: check phone connection)")
     else:
         print(f"    Average Bandwidth: {kbps_1:8.1f} kbps")
         print(f"    Average Framerate: {fps_1:8.1f} FPS")
 
     print("\n[2] Hardware DPU + VCU H.264 Pipeline (pipeline_hw.py)")
     if oom_hw:
-        print("    *** FAILED — OOM killed during DPU model load ***")
+        print("    *** FAILED: OOM killed during DPU model load ***")
     elif kbps_hw == 0:
         print("    Average Bandwidth:      0.0 kbps")
         print("    Average Framerate:      0.0 FPS")
-        print("    (No [Telemetry] lines seen — check phone connection)")
+        print("    (No [Telemetry] lines seen: check phone connection)")
     else:
         print(f"    Average Bandwidth: {kbps_hw:8.1f} kbps")
         print(f"    Average Framerate: {fps_hw:8.1f} FPS")

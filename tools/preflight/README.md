@@ -2,7 +2,7 @@
 
 ---
 
-# `preflight.py` — Hardware Preflight Checker
+# `preflight.py`: Hardware Preflight Checker
 
 > [!TIP]
 > **Always run this before starting any pipeline.** It verifies every dependency in under 10 seconds and exits with a clear PASS/FAIL for each check.
@@ -31,7 +31,7 @@ python3 tools/preflight/preflight.py
 
 ```
 ============================================================
-  ZCU104 ROI Pipeline — Preflight Check
+  ZCU104 ROI Pipeline: Preflight Check
 ============================================================
 
 [1] Python packages
@@ -56,23 +56,16 @@ python3 tools/preflight/preflight.py
 ============================================================
 ```
 
-- `[PASS]` — check succeeded (green)
-- `[FAIL]` — check failed, with a `FIX:` line showing exactly what to do (red)
-- `[WARN]` — informational warning, not a blocking failure (yellow)
-
+- `[PASS]`: check succeeded (green)- `[FAIL]`: check failed, with a `FIX:` line showing exactly what to do (red)- `[WARN]`: informational warning, not a blocking failure (yellow)
 ## Interpreting Key Checks
 
 ### `omxh264enc (VCU) found` vs not found
 
-- **Found:** You have the full VCU bitstream loaded. `pipeline_hw.py` will work with hardware H.264 encoding.
-- **Not found:** You are on a non-VCU bitstream. `pipeline_hw.py` will fail at the VCU step. Use `pipeline_hw_1.py` (MJPEG only) instead.
-
+- **Found:** You have the full VCU bitstream loaded. `pipeline_hw.py` will work with hardware H.264 encoding.- **Not found:** You are on a non-VCU bitstream. `pipeline_hw.py` will fail at the VCU step. Use `pipeline_hw_1.py` (MJPEG only) instead.
 ### DPU runner creation
 
 If the DPU runner fails to create even though the `.xmodel` exists, it usually means:
-- Wrong architecture: the `.xmodel` was compiled for a different DPU (e.g., ZCU102 instead of ZCU104)
-- DPU lock held: a previous Python process is still holding the DPU resource. Run `pkill python3`.
-
+- Wrong architecture: the `.xmodel` was compiled for a different DPU (e.g., ZCU102 instead of ZCU104)- DPU lock held: a previous Python process is still holding the DPU resource. Run `pkill python3`.
 ## Configuration
 
 Edit `PHONE_HOST` and `LAPTOP_IP` at the top of `preflight.py` to match your network setup:
@@ -84,5 +77,4 @@ LAPTOP_IP  = "192.168.137.197"
 
 ## See Also
 
-- [Hardware Setup Guide](../../docs/02_hardware_setup.md)
-- [Troubleshooting](../../docs/09_troubleshooting.md)
+- [Hardware Setup Guide](../../docs/02_hardware_setup.md)- [Troubleshooting](../../docs/09_troubleshooting.md)

@@ -56,10 +56,10 @@ def pad_probe_callback(pad, info):
                 has_face = True
                 
                 # 1. Expand the ROI to include the whole head
-                x1 = max(0, x - 40)
-                y1 = max(0, y - 40)
-                w1 = min(width - x1, w + 80)
-                h1 = min(height - y1, h + 80)
+                x1 = max(0, x: 40)
+                y1 = max(0, y: 40)
+                w1 = min(width: x1, w + 80)
+                h1 = min(height: y1, h + 80)
                 
                 # 2. Copy the face from the original image into the black mask
                 mask[y1:y1+h1, x1:x1+w1] = image_array[y1:y1+h1, x1:x1+w1]

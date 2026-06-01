@@ -2,18 +2,16 @@
 
 ---
 
-# `tracker.py` — Centroid Tracker with Velocity Smoothing
+# `tracker.py`: Centroid Tracker with Velocity Smoothing
 
 Tracks the centroid of a detected person across frames and provides an exponential-weighted velocity estimate. This velocity drives the motion-predictive padding in `adaptive_roi.py`.
 
 ## Why Velocity Smoothing?
 
-Raw frame-to-frame centroid displacement is **noisy** — the YOLO bounding box jitters slightly even for a stationary person. A simple instantaneous velocity estimate would cause the adaptive padding to flicker.
+Raw frame-to-frame centroid displacement is **noisy**: the YOLO bounding box jitters slightly even for a stationary person. A simple instantaneous velocity estimate would cause the adaptive padding to flicker.
 
 Exponential-weighted averaging over the last 8 frames gives:
-- **High weight** to the most recent 1–2 frames (responsive to actual direction changes)
-- **Low weight** to older frames (dampens jitter and outliers)
-
+- **High weight** to the most recent 1–2 frames (responsive to actual direction changes)- **Low weight** to older frames (dampens jitter and outliers)
 ## API
 
 ### `CentroidTracker(history=8)`
@@ -23,7 +21,7 @@ Creates a tracker for a single target. One instance per tracked person slot.
 | Method | Description |
 |--------|-------------|
 | `update(cx, cy)` | Call once per frame with the target centroid. Computes instantaneous velocity and appends to the ring buffer. |
-| `predict_next()` | Returns `(vx, vy)` — expected pixel displacement next frame, exponentially smoothed. |
+| `predict_next()` | Returns `(vx, vy)`: expected pixel displacement next frame, exponentially smoothed. |
 | `smooth_velocity()` | Internal: computes the exponential-weighted mean over the history buffer. |
 | `reset()` | Clear all history. Call when a target is lost to prevent stale velocity affecting the next target. |
 
@@ -72,12 +70,7 @@ trackers[lost_idx].reset()
 
 ## Design Notes
 
-- **Pure Python + NumPy** — no external tracking library (SORT, DeepSORT etc.) required
-- **One tracker per slot**, not per identity — targets are matched to slots by detection order, not by appearance. This is sufficient for our use case because we only need velocity, not identity
-- **Ring buffer** (`deque(maxlen=8)`) — automatically discards old frames, constant memory
-- The tracker does **not** do Kalman filtering or data association — it's a deliberate simplicity choice for an embedded system with limited CPU budget
-
+- **Pure Python + NumPy**: no external tracking library (SORT, DeepSORT etc.) required- **One tracker per slot**, not per identity: targets are matched to slots by detection order, not by appearance. This is sufficient for our use case because we only need velocity, not identity- **Ring buffer** (`deque(maxlen=8)`): automatically discards old frames, constant memory- The tracker does **not** do Kalman filtering or data association: it's a deliberate simplicity choice for an embedded system with limited CPU budget
 ## See Also
 
-- [`adaptive_roi/`](../adaptive_roi/) — consumes the velocity output from this module
-- [Zone Masking — Centroid Tracker](../../docs/04_zone_masking_algorithm.md#centroid-tracker)
+- [`adaptive_roi/`](../adaptive_roi/): consumes the velocity output from this module- [Zone Masking: Centroid Tracker](../../docs/04_zone_masking_algorithm.md#centroid-tracker)

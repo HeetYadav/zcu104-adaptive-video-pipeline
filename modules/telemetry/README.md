@@ -2,7 +2,7 @@
 
 ---
 
-# `telemetry.py` — Per-Zone JPEG Byte Measurement
+# `telemetry.py`: Per-Zone JPEG Byte Measurement
 
 A diagnostic module used to independently measure the JPEG-compressed byte size of each zone. Quantifies the compression benefit of Zone 2 downsampling and Zone 3 blacking.
 
@@ -17,7 +17,7 @@ Instead of measuring total frame bandwidth, `telemetry.py` encodes each zone **i
 |-------------|-----------------|
 | `Z1_bytes` | Bytes used by full-resolution ROI crop |
 | `Z2_bytes` | Bytes used by the 50%-downsampled proximity ring crop |
-| `Z3_bytes_per_200px` | Bytes for a 200×200 black background sample — should be very small |
+| `Z3_bytes_per_200px` | Bytes for a 200×200 black background sample: should be very small |
 | `Z1/Z2 ratio` | How much more efficient Zone 1 is vs Zone 2 (higher = more benefit from downsampling) |
 
 ## API
@@ -84,4 +84,4 @@ if adapted_boxes and ring_boxes:
 
 ## See Also
 
-- [`tools/benchmark/`](../../tools/benchmark/) — the automated benchmark (supersedes this module for final measurements)
+- [`tools/benchmark/`](../../tools/benchmark/): the automated benchmark (supersedes this module for final measurements)

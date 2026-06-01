@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-preflight.py — Run this FIRST on the ZCU104 before starting pipeline_hw.py.
+preflight.py: Run this FIRST on the ZCU104 before starting pipeline_hw.py.
 Checks every dependency and hardware driver so failures are diagnosed
 before the pipeline starts, not mid-run.
 
@@ -34,7 +34,7 @@ def warn(label, msg=""):
 
 
 print("=" * 60)
-print("  ZCU104 ROI Pipeline — Preflight Check")
+print("  ZCU104 ROI Pipeline: Preflight Check")
 print("=" * 60)
 
 # ── Python packages ───────────────────────────────────────────────
@@ -134,12 +134,12 @@ omx_ok = gst_inspect("omxh264enc")
 x264_ok = gst_inspect("x264enc")
 
 if omx_ok:
-    check("omxh264enc (VCU hardware encoder) — PRIMARY", True)
+    check("omxh264enc (VCU hardware encoder): PRIMARY", True)
     if x264_ok:
         warn("x264enc also available (software fallback)")
     else:
         warn("x264enc not installed",
-             "Not needed — omxh264enc is the active encoder. "
+             "Not needed: omxh264enc is the active encoder. "
              "Install if you ever need a software fallback: "
              "sudo apt-get install gstreamer1.0-plugins-ugly")
 elif x264_ok:
@@ -190,11 +190,11 @@ try:
               "DPU driver not responding. Re-flash the bitstream or reboot.")
 except subprocess.TimeoutExpired:
     warn("xdputil query timed out (5 s)",
-         "DPU hardware may still work — timeout is common on some bitstreams. "
+         "DPU hardware may still work: timeout is common on some bitstreams. "
          "Try: xdputil query  manually to check.")
 except FileNotFoundError:
     warn("xdputil not found",
-         "Not fatal — xdputil is a diagnostic tool, not required to run the pipeline.")
+         "Not fatal: xdputil is a diagnostic tool, not required to run the pipeline.")
 
 # ── Summary ───────────────────────────────────────────────────────
 print("\n" + "=" * 60)
