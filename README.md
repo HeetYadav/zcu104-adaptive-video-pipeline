@@ -13,11 +13,17 @@ YOLOv4 runs on the DPU. H.264 encodes on the VCU. The CPU is barely touched.
 [![Vitis AI 1.3](https://img.shields.io/badge/vitis--ai-1.3-orange.svg)](https://github.com/Xilinx/Vitis-AI)
 [![License MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-🎥 **[Watch the full pipeline in action on YouTube!](https://www.youtube.com/watch?v=sN2svjY858E)**
+
 
 </div>
 
 ![VLC Stream Output with Detection Zones](assets/photos/vlc_detection_multi.png)
+
+## 🎥 Watch it in Action
+
+[![Edge AI Video Pipeline Demo](https://img.youtube.com/vi/sN2svjY858E/maxresdefault.jpg)](https://www.youtube.com/watch?v=sN2svjY858E)
+
+*Click to watch the full technical breakdown and demonstration.*
 
 ---
 
@@ -26,7 +32,9 @@ YOLOv4 runs on the DPU. H.264 encodes on the VCU. The CPU is barely touched.
 A surveillance or robotics camera streaming raw video over a network wastes enormous bandwidth on background pixels that carry no useful information. On an embedded system like the ZCU104, that bandwidth is directly tied to power consumption, network congestion, and storage costs.
 
 **This project proves, on real silicon, that:**
-- A dedicated FPGA AI engine (DPU) can detect persons in real-time at the edge- A 3-zone masking strategy: full-res ROI, half-res proximity ring, black background: makes the background nearly incompressible for an H.264 encoder- The Xilinx VCU hardware H.264 encoder (Variable Bitrate mode) then exploits those black pixels to drop bandwidth dynamically with zero CPU overhead
+- A dedicated FPGA AI engine (DPU) can detect persons in real-time at the edge
+- A 3-zone masking strategy: full-res ROI, half-res proximity ring, black background: makes the background nearly incompressible for an H.264 encoder
+- The Xilinx VCU hardware H.264 encoder (Variable Bitrate mode) then exploits those black pixels to drop bandwidth dynamically with zero CPU overhead
 ---
 
 ## Benchmark Results
