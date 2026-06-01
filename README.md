@@ -21,9 +21,14 @@ YOLOv4 runs on the DPU. H.264 encodes on the VCU. The CPU is barely touched.
 
 ## 🎥 Watch it in Action
 
-[![Edge AI Video Pipeline Demo](https://img.youtube.com/vi/sN2svjY858E/maxresdefault.jpg)](https://www.youtube.com/watch?v=sN2svjY858E)
-
-*Click to watch the full technical breakdown and demonstration.*
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=sN2svjY858E">
+    <img src="https://img.shields.io/badge/YouTube-Watch%20the%20Demo-red?style=for-the-badge&logo=youtube" alt="Watch on YouTube" /><br><br>
+    <img src="https://img.youtube.com/vi/sN2svjY858E/maxresdefault.jpg" alt="Edge AI Video Pipeline Demo" width="800" />
+  </a>
+  <br>
+  <em>Click to watch the full technical breakdown and demonstration.</em>
+</div>
 
 ---
 
