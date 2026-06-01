@@ -119,22 +119,40 @@ print("\n[4] GStreamer plugins")
 def gst_inspect(plugin):
     r = subprocess.run(
         ["gst-inspect-1.0", plugin],
-        capture_output=True, text=True
+        capture_output=True, text=True,
+        timeout=5
     )
     return r.returncode == 0
 
-for plugin in ["x264enc", "rtph264pay", "udpsink", "videoconvert", "appsrc"]:
+# These are mandatory
+for plugin in ["rtph264pay", "udpsink", "videoconvert", "appsrc"]:
     check(f"gst-inspect {plugin}", gst_inspect(plugin),
-          f"sudo apt-get install gstreamer1.0-plugins-ugly gstreamer1.0-plugins-good")
+          "sudo apt-get install gstreamer1.0-plugins-good gstreamer1.0-plugins-base")
 
-# Optional: VCU check
-vcu_ok = gst_inspect("omxh264enc")
-if vcu_ok:
-    warn("omxh264enc (VCU) found — you CAN use hardware H.264.",
-         "Change x264enc → omxh264enc in _gst_pipeline() for true VCU encoding.")
+# Encoder: prefer omxh264enc (VCU hardware), fall back to x264enc (software)
+omx_ok = gst_inspect("omxh264enc")
+x264_ok = gst_inspect("x264enc")
+
+if omx_ok:
+    check("omxh264enc (VCU hardware encoder) — PRIMARY", True)
+    if x264_ok:
+        warn("x264enc also available (software fallback)")
+    else:
+        warn("x264enc not installed",
+             "Not needed — omxh264enc is the active encoder. "
+             "Install if you ever need a software fallback: "
+             "sudo apt-get install gstreamer1.0-plugins-ugly")
+elif x264_ok:
+    check("omxh264enc (VCU hardware encoder)", False,
+          "VCU not available on this bitstream.")
+    warn("x264enc (software fallback) available",
+         "Pipeline will work but encoder is software. "
+         "Change omxh264enc → x264enc tune=zerolatency bitrate=1500 speed-preset=ultrafast "
+         "in _gst_pipeline() in pipeline_hw.py")
 else:
-    warn("omxh264enc (VCU) not found — using x264enc (software H.264).",
-         "This is expected on the 2×DPU bitstream. Bandwidth savings still work.")
+    check("omxh264enc", False, "No H.264 encoder found at all!")
+    check("x264enc", False,
+          "Install one: sudo apt-get install gstreamer1.0-plugins-ugly")
 
 # ── Network connectivity ──────────────────────────────────────────
 print("\n[5] Network")
@@ -150,19 +168,33 @@ check(f"Ping phone ({PHONE_HOST})", ping(PHONE_HOST),
       "Check phone IP in pipeline_hw.py PHONE_HOST. "
       "Phone must run IP Webcam app and be on the same network.")
 check(f"Ping laptop ({LAPTOP_IP})", ping(LAPTOP_IP),
-      "Check laptop IP in pipeline_hw.py LAPTOP_IP.")
+      "Run `ipconfig` on the laptop. Find the IP on the same adapter "
+      "as the ZCU104 (usually 'Ethernet' or 'Wi-Fi'). "
+      "Update LAPTOP_IP in pipeline_hw.py. "
+      "Also check: Windows Firewall → allow UDP port 5000 inbound.")
 
 # ── xdputil ───────────────────────────────────────────────────────
 print("\n[6] DPU hardware driver")
-r = subprocess.run(["xdputil", "query"], capture_output=True, text=True)
-if r.returncode == 0:
-    check("xdputil query (DPU driver alive)", True)
-    # Print DPU info
-    for line in r.stdout.splitlines()[:10]:
-        print(f"       {line}")
-else:
-    check("xdputil query", False,
-          "DPU driver not responding. Re-flash the bitstream or reboot.")
+try:
+    r = subprocess.run(
+        ["xdputil", "query"],
+        capture_output=True, text=True,
+        timeout=5          # xdputil can hang if DPU driver is unresponsive
+    )
+    if r.returncode == 0:
+        check("xdputil query (DPU driver alive)", True)
+        for line in r.stdout.splitlines()[:10]:
+            print(f"       {line}")
+    else:
+        check("xdputil query", False,
+              "DPU driver not responding. Re-flash the bitstream or reboot.")
+except subprocess.TimeoutExpired:
+    warn("xdputil query timed out (5 s)",
+         "DPU hardware may still work — timeout is common on some bitstreams. "
+         "Try: xdputil query  manually to check.")
+except FileNotFoundError:
+    warn("xdputil not found",
+         "Not fatal — xdputil is a diagnostic tool, not required to run the pipeline.")
 
 # ── Summary ───────────────────────────────────────────────────────
 print("\n" + "=" * 60)
