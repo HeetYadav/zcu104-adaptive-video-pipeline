@@ -8,54 +8,15 @@ import threading
 import urllib.request
 import gc
 
-# ─── Swap configuration ────────────────────────────────────────────────────
-# The ZCU104 has 2 GB RAM but 1.67 GB is CMA-reserved for DPU/VCU hardware.
-# Only ~20 MB of non-CMA RAM is free when the GUI is running.
-# The DPU model loader (YOLOv4 leaky SPP) needs ~225 MB anon RAM to complete.
-# Without swap the OOM killer terminates the pipeline every time.
-SWAP_FILE    = "/home/root/benchmark.swap"
-SWAP_SIZE_MB = 512
-
-def setup_swap():
-    """Create and enable a 512 MB swap file if no swap is currently active."""
-    try:
-        with open('/proc/swaps') as f:
-            lines = f.readlines()
-        if len(lines) > 1:
-            active = lines[1].strip().split()[0]
-            print(f"[Setup] Swap already active: {active}")
-            return True
-    except Exception:
-        pass
-
-    print(f"[Setup] No swap detected. Creating {SWAP_SIZE_MB} MB swap file at {SWAP_FILE} ...")
-    print("[Setup] This takes ~30 s the first time but only runs once per boot.\n")
-
-    # Check available disk space on the root filesystem
-    try:
-        stat   = os.statvfs('/')
-        free_mb = (stat.f_bavail * stat.f_frsize) // (1024 * 1024)
-        if free_mb < SWAP_SIZE_MB + 64:
-            print(f"[Setup] ERROR: Not enough disk space ({free_mb} MB free, need {SWAP_SIZE_MB + 64} MB).")
-            print(f"[Setup] Free up space on / and retry, or manually: swapon <your-swap>")
-            return False
-        print(f"[Setup] Disk space OK: {free_mb} MB free.")
-    except Exception:
-        pass
-
-    for cmd in [
-        f"dd if=/dev/zero of={SWAP_FILE} bs=1M count={SWAP_SIZE_MB} status=progress",
-        f"chmod 600 {SWAP_FILE}",
-        f"mkswap {SWAP_FILE}",
-        f"swapon {SWAP_FILE}",
-    ]:
-        if os.system(cmd) != 0:
-            print(f"[Setup] ERROR: Command failed: {cmd}")
-            return False
-
-    print(f"\n[Setup] Swap enabled ({SWAP_SIZE_MB} MB). OOM risk eliminated.\n")
-    return True
-
+def kill_desktop_gui():
+    """
+    The ZCU104 has 2 GB RAM but 1.67 GB is CMA-reserved for hardware.
+    The desktop GUI (Xorg, matchbox, etc.) wastes ~100 MB of the precious
+    remaining non-CMA RAM. Killing it gives the DPU enough memory to load.
+    """
+    print("[Setup] Freeing RAM by shutting down Desktop GUI (Xorg)...")
+    os.system("killall -9 Xorg matchbox-desktop matchbox-panel matchbox-window dbus-daemon 2>/dev/null")
+    time.sleep(2)
 
 def drop_caches():
     try:
@@ -64,8 +25,7 @@ def drop_caches():
             f.write("3\n")
         print("[Tester] Page cache dropped.")
     except Exception as e:
-        print(f"[Tester] WARNING: Could not drop caches: {e}")
-
+        pass
 
 def benchmark_pipeline(script_name, duration=15):
     log_file = f"/tmp/{os.path.basename(script_name)}.bench.log"
@@ -77,7 +37,6 @@ def benchmark_pipeline(script_name, duration=15):
     drop_caches()
     time.sleep(1)
 
-    # Release as much memory as possible from this process before forking
     gc.collect()
     try:
         import ctypes
@@ -85,29 +44,21 @@ def benchmark_pipeline(script_name, duration=15):
     except Exception:
         pass
 
-    # ── Start pipeline ─────────────────────────────────────────────
-    # Write stdout + stderr to a LOG FILE, NOT a PIPE.
-    # Using a pipe keeps a kernel buffer + Python io.BufferedReader
-    # alive the whole time, adding unnecessary memory pressure.
-    # With a file, this process can just sleep() while the pipeline runs.
     log_fd = open(log_file, 'w')
     proc   = subprocess.Popen(
         ["python3", "-u", script_name],
         stdout=log_fd,
         stderr=log_fd,
-        preexec_fn=os.setsid,   # separate process group for clean kill
+        preexec_fn=os.setsid,
     )
-    log_fd.close()  # close our handle — the subprocess owns the fd now
+    log_fd.close()
 
     print(f"[Tester] Pipeline started (PID {proc.pid}). Waiting 10 s for DPU model load...")
-    # YOLOv4 leaky SPP takes 6–10 s to deserialize on the ZCU104 DPU
     time.sleep(10)
 
-    # ── Client simulation ─────────────────────────────────────────
     def simulate_client():
         try:
             resp = urllib.request.urlopen("http://127.0.0.1:5000/stream", timeout=10)
-            # Read and discard chunks — never buffer the whole stream
             while True:
                 if not resp.read(65536):
                     break
@@ -117,11 +68,9 @@ def benchmark_pipeline(script_name, duration=15):
     print("[Tester] Simulating VLC client connection...")
     threading.Thread(target=simulate_client, daemon=True).start()
 
-    # ── Collect telemetry ─────────────────────────────────────────
     print(f"[Tester] Measuring for {duration} s ...\n")
-    time.sleep(duration)   # This process is nearly idle — minimal RAM pressure
+    time.sleep(duration)
 
-    # ── Stop pipeline ─────────────────────────────────────────────
     print(f"\n[Tester] Stopping {script_name}...")
     try:
         os.killpg(os.getpgid(proc.pid), signal.SIGINT)
@@ -136,11 +85,9 @@ def benchmark_pipeline(script_name, duration=15):
         except Exception:
             pass
 
-    # Give the DPU driver 5 s to release CMA and /tmp/vart_device_0
     print("[Tester] Cooling down 5 s ...")
     time.sleep(5)
 
-    # ── Parse log file ────────────────────────────────────────────
     kbps_list    = []
     fps_list     = []
     oom_detected = False
@@ -161,7 +108,6 @@ def benchmark_pipeline(script_name, duration=15):
     except Exception as e:
         print(f"[Tester] Could not read log: {e}")
 
-    # Print last 10 lines of the log so the user can see what happened
     try:
         with open(log_file) as f:
             all_lines = f.readlines()
@@ -173,7 +119,7 @@ def benchmark_pipeline(script_name, duration=15):
         pass
 
     if oom_detected:
-        print("\n[Tester] *** OOM KILL DETECTED — swap may not be active ***")
+        print("\n[Tester] *** OOM KILL DETECTED — Not enough RAM ***")
 
     avg_kbps = sum(kbps_list) / len(kbps_list) if kbps_list else 0.0
     avg_fps  = sum(fps_list)  / len(fps_list)  if fps_list  else 0.0
@@ -191,18 +137,18 @@ if __name__ == "__main__":
     print("Ensure no other python3 pipeline is running.")
     print("Run:  pkill python3   if in doubt.\n")
 
-    # ── Step 1: Ensure swap exists ────────────────────────────────
-    # Critical on the ZCU104 — only ~20 MB of non-CMA RAM is free
-    # at runtime, which is nowhere near enough to load the DPU model.
-    swap_ok = setup_swap()
-    if not swap_ok:
-        print("\n[WARNING] Continuing without swap — pipelines will likely OOM-crash.\n")
+    # Clean up the failed swap file to give you your disk space back!
+    if os.path.exists("/home/root/benchmark.swap"):
+        os.remove("/home/root/benchmark.swap")
 
-    # ── Step 2: Run pipelines ─────────────────────────────────────
+    # Step 1: Kill the Desktop GUI to free up 100+ MB of RAM
+    kill_desktop_gui()
+
+    # Step 2: Run pipelines
     kbps_1,  fps_1,  oom_1  = benchmark_pipeline("pipeline_hw_1.py", duration=15)
     kbps_hw, fps_hw, oom_hw = benchmark_pipeline("pipeline_hw.py",   duration=15)
 
-    # ── Step 3: Report ────────────────────────────────────────────
+    # Step 3: Report
     print("\n\n=======================================================")
     print("                 FINAL PIPELINE REPORT                 ")
     print("=======================================================")
@@ -236,6 +182,5 @@ if __name__ == "__main__":
         print(f"                       {ratio:.1f}x LESS bandwidth than MJPEG!")
     elif oom_1 or oom_hw:
         print("    Cannot compare — one or both pipelines were OOM-killed.")
-        print(f"    Swap file: {SWAP_FILE}")
 
     print("=======================================================\n")
