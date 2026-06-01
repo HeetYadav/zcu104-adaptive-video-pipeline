@@ -54,7 +54,6 @@ Hardware photos are the biggest gap in this documentation. They are **very welco
 
 | What | Filename | Location |
 |------|----------|----------|
-| ZCU104 board top view | `zcu104_board_top.jpg` | `assets/photos/` |
 | Full setup on desk | `setup_desk_overview.jpg` | `assets/photos/` |
 | JTAG/UART cable detail | `setup_uart_connection.jpg` | `assets/photos/` |
 | VLC output screenshot | `vlc_stream_output.png` | `assets/photos/` |
@@ -71,7 +70,7 @@ Hardware photos are the biggest gap in this documentation. They are **very welco
 Search for `> [!IMPORTANT]` blocks containing `📸 Add photo here` — each one tells you the exact filename it expects. Replace the callout block with a standard Markdown image embed:
 
 ```markdown
-![ZCU104 board top view](../assets/photos/zcu104_board_top.jpg)
+![Full Hardware Setup on Desk](../assets/photos/setup_desk_overview.jpg)
 ```
 
 ---

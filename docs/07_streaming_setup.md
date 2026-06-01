@@ -61,9 +61,7 @@ The pipeline is ready when you see the `============` footer.
 
 ## Opening in VLC
 
-> [!IMPORTANT]
-> **📸 Add screenshot here:** `assets/photos/vlc_stream_output.png`
-> Screenshot of VLC playing the stream with detection boxes visible — green Zone 1, amber Zone 2 dashed ring, black background (Zone 3).
+![VLC Stream Output](../assets/photos/vlc_detection_zones.png)
 
 1. Open **VLC Media Player** on your laptop
 2. Go to **Media → Open Network Stream** (or press `Ctrl+N`)
@@ -123,9 +121,7 @@ After changing the setting, you must **restart VLC** for it to take effect. The 
 
 ## What You Should See
 
-> [!IMPORTANT]
-> **📸 Add screenshot here:** `assets/photos/vlc_detection_zones.png`
-> Close-up view showing the three zones clearly labelled: "Z1" in the green box around the person, "Z2" in the amber dashed ring, and the rest of the frame in pure black.
+![VLC Stream Output](../assets/photos/vlc_detection_zones.png)
 
 When working correctly:
 

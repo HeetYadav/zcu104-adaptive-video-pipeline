@@ -14,9 +14,7 @@ YOLOv4 runs on the DPU. H.264 encodes on the VCU. The CPU is barely touched.
 
 </div>
 
-> [!IMPORTANT]
-> **📸 Add photo here:** `assets/photos/vlc_detection_zones.png`
-> A screenshot of the VLC stream output showing the 3-zone overlay — Zone 1 (green solid box), Zone 2 (amber dashed ring), Zone 3 (black background) — is the single most impactful visual for the README.
+![VLC Stream Output with Detection Zones](assets/photos/vlc_detection_zones.png)
 
 ---
 

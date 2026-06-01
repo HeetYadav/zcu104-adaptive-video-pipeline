@@ -18,9 +18,7 @@
 
 ## ZCU104 Board Overview
 
-> [!IMPORTANT]
-> **📸 Add photo here:** `assets/photos/zcu104_board_top.jpg`
-> Shoot from directly above. Ensure the Ethernet connector, USB-UART bridge (FTDI), SD card slot, and power jack are all visible and labelled.
+
 
 The Xilinx ZCU104 is an evaluation kit for the Zynq UltraScale+ MPSoC family. Its distinguishing feature for this project is the **combined presence of both a DPU and a VCU** in a single device.
 
@@ -60,9 +58,7 @@ The Xilinx ZCU104 is an evaluation kit for the Zynq UltraScale+ MPSoC family. It
 
 All three devices (board, phone, laptop) must be on the **same subnet**.
 
-> [!IMPORTANT]
-> **📸 Add photo here:** `assets/photos/setup_desk_overview.jpg`
-> Show the phone propped up facing the scene, the ZCU104 connected to the same router, and the laptop open showing VLC. This is the single most useful "what does the full setup look like" photo.
+![Full Hardware Setup on Desk](../assets/photos/setup_desk_overview.jpg)
 
 ### Typical IP Addresses
 
