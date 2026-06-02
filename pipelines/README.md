@@ -4,7 +4,7 @@
 
 # Pipelines
 
-This folder contains the two runnable pipeline entry points. Run them directly on the ZCU104 board.
+This folder contains the three runnable pipeline entry points. Two run directly on the ZCU104 board, and one runs on any standard computer (laptop/desktop).
 
 ## Which Pipeline Should I Run?
 
@@ -12,14 +12,18 @@ This folder contains the two runnable pipeline entry points. Run them directly o
 |----------|--------|--------------|---------|
 | **`pipeline_hw.py`** | [`pipeline_hw/`](pipeline_hw/) | DPU + VCU (Full HW) | ✅ **Primary**: production pipeline with hardware H.264 telemetry |
 | **`pipeline_hw_1.py`** | [`pipeline_hw_1/`](pipeline_hw_1/) | DPU only | 📊 **Benchmark baseline**: DPU inference with MJPEG output |
+| **`pipeline_sim.py`** | [`pipeline_sim/`](pipeline_sim/) | CPU only (Laptop/Desktop) | 💻 **Simulation**: test the algorithm locally without an FPGA |
 
 ## Quick Commands
 
 ```bash
-# Full hardware pipeline (recommended)
+# CPU Simulation (run on your laptop)
+python3 pipelines/pipeline_sim/pipeline_sim.py
+
+# Full hardware pipeline (recommended on board)
 python3 pipelines/pipeline_hw/pipeline_hw.py
 
-# MJPEG baseline (for benchmark comparison)
+# MJPEG baseline (for benchmark comparison on board)
 python3 pipelines/pipeline_hw_1/pipeline_hw_1.py
 ```
 
