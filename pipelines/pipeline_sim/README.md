@@ -136,7 +136,7 @@ The **zone masking algorithm, motion prediction, and bandwidth model are identic
 
 ## Stopping
 
-Press **Q** in the video window, or **Ctrl+C** in the terminal.
+Press **Ctrl+C** in the terminal.
 
 ---
 
