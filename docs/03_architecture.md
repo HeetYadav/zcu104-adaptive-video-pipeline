@@ -5,7 +5,12 @@
 # 03: System Architecture
 
 ## Table of Contents
-- [High-Level Block Diagram](#high-level-block-diagram)- [Thread Model](#thread-model)- [Inter-Thread Data Flow (Sequence Diagram)](#inter-thread-data-flow)- [Thread Synchronization](#thread-synchronization)- [GStreamer Pipeline String](#gstreamer-pipeline-string)- [Memory and Lock Architecture](#memory-and-lock-architecture)
+- [High-Level Block Diagram](#high-level-block-diagram)
+- [Thread Model](#thread-model)
+- [Inter-Thread Data Flow (Sequence Diagram)](#inter-thread-data-flow)
+- [Thread Synchronization](#thread-synchronization)
+- [GStreamer Pipeline String](#gstreamer-pipeline-string)
+- [Memory and Lock Architecture](#memory-and-lock-architecture)
 ---
 
 ## High-Level Block Diagram

@@ -5,7 +5,15 @@
 # 04: Zone Masking Algorithm
 
 ## Table of Contents
-- [Core Idea](#core-idea)- [Zone Definitions](#zone-definitions)- [Why Black Pixels Save Bandwidth](#why-black-pixels-save-bandwidth)- [Zone Construction (ASCII Diagram)](#zone-construction)- [Masking Decision Flowchart](#masking-decision-flowchart)- [Multi-Target Merging](#multi-target-merging)- [Motion-Predictive ROI: `adaptive_roi.py`](#motion-predictive-roi)- [Centroid Tracker: `tracker.py`](#centroid-tracker)- [Caching Optimization](#caching-optimization)
+- [Core Idea](#core-idea)
+- [Zone Definitions](#zone-definitions)
+- [Why Black Pixels Save Bandwidth](#why-black-pixels-save-bandwidth)
+- [Zone Construction (ASCII Diagram)](#zone-construction)
+- [Masking Decision Flowchart](#masking-decision-flowchart)
+- [Multi-Target Merging](#multi-target-merging)
+- [Motion-Predictive ROI: `adaptive_roi.py`](#motion-predictive-roi)
+- [Centroid Tracker: `tracker.py`](#centroid-tracker)
+- [Caching Optimization](#caching-optimization)
 ---
 
 ## Core Idea

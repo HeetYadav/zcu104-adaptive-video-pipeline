@@ -8,7 +8,16 @@ Every hard-won fix from development. Each issue follows a consistent structure: 
 
 ## Table of Contents
 
-- [xir::DataType::UNKNOWN Crash](#xirdatatypeunknown-crash)- [OSError: Address already in use](#oserror-address-already-in-use)- [DPU Resource Lock: "Waiting for process to release"](#dpu-resource-lock)- [DRM Log Flooding the Terminal](#drm-log-flooding)- [VLC Shows Black Screen](#vlc-shows-black-screen)- [Pipeline Output is Choppy (Pause → Fast-Forward → Pause)](#choppy-output)- [Benchmark Reports 0.0 kbps / 0.0 FPS](#benchmark-reports-00)- [SCP Transfer Fails: Host Key Rejected](#scp-transfer-fails)- [Phone Camera Feed Not Connecting](#phone-camera-feed-not-connecting)- [VCU GStreamer Pipeline Failed to Open](#vcu-gstreamer-pipeline-failed)
+- [xir::DataType::UNKNOWN Crash](#xirdatatypeunknown-crash)
+- [OSError: Address already in use](#oserror-address-already-in-use)
+- [DPU Resource Lock: "Waiting for process to release"](#dpu-resource-lock)
+- [DRM Log Flooding the Terminal](#drm-log-flooding)
+- [VLC Shows Black Screen](#vlc-shows-black-screen)
+- [Pipeline Output is Choppy (Pause → Fast-Forward → Pause)](#choppy-output)
+- [Benchmark Reports 0.0 kbps / 0.0 FPS](#benchmark-reports-00)
+- [SCP Transfer Fails: Host Key Rejected](#scp-transfer-fails)
+- [Phone Camera Feed Not Connecting](#phone-camera-feed-not-connecting)
+- [VCU GStreamer Pipeline Failed to Open](#vcu-gstreamer-pipeline-failed)
 ---
 
 <details>

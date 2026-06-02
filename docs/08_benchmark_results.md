@@ -5,7 +5,12 @@
 # 08: Benchmark Results
 
 ## Table of Contents
-- [How the Benchmark Works](#how-the-benchmark-works)- [Methodology](#methodology)- [Results](#results)- [Bandwidth Savings Analysis](#bandwidth-savings-analysis)- [Understanding the Telemetry Format](#understanding-the-telemetry-format)- [Reproducing the Results](#reproducing-the-results)
+- [How the Benchmark Works](#how-the-benchmark-works)
+- [Methodology](#methodology)
+- [Results](#results)
+- [Bandwidth Savings Analysis](#bandwidth-savings-analysis)
+- [Understanding the Telemetry Format](#understanding-the-telemetry-format)
+- [Reproducing the Results](#reproducing-the-results)
 ---
 
 ## How the Benchmark Works

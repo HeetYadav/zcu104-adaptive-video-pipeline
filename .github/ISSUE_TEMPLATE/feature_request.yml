@@ -1,0 +1,53 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a look at the [Extension Ideas](../../README.md#what-could-you-build-next) 
+        section first — your idea might already be listed there with a starting point!
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature category
+      options:
+        - New camera input (USB, RTSP, etc.)
+        - New output format (RTSP, HLS, MQTT, etc.)
+        - New AI model (YOLOv8, face detection, etc.)
+        - Encoding improvement (H.265, quality tuning)
+        - Performance / power optimization
+        - Documentation improvement
+        - Testing / CI improvement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this solves
+      description: What limitation or gap are you trying to address?
+      placeholder: "e.g. The pipeline only works with an Android phone camera. I want to use a USB webcam..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: How would you implement this? Even a rough idea helps.
+      placeholder: "e.g. Replace the grabber thread's HTTP polling with cv2.VideoCapture(0) for local USB cameras..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: hardware-available
+    attributes:
+      label: Hardware available for testing
+      options:
+        - label: I have a ZCU104 board and can test on real hardware
+        - label: I can test in simulation mode (pipeline_sim.py) only
+        - label: I'm proposing this based on documentation reading only

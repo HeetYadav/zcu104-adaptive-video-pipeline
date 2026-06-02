@@ -5,7 +5,11 @@
 # 01: Project Overview
 
 ## Table of Contents
-- [The Problem](#the-problem)- [The Hypothesis](#the-hypothesis)- [Why FPGA?](#why-fpga)- [Project Evolution](#project-evolution)- [Key Results](#key-results)
+- [The Problem](#the-problem)
+- [The Hypothesis](#the-hypothesis)
+- [Why FPGA?](#why-fpga)
+- [Project Evolution](#project-evolution)
+- [Key Results](#key-results)
 ---
 
 ## The Problem

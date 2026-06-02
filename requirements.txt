@@ -1,0 +1,42 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ZCU104 ROI Bandwidth Management — Python Dependencies
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# INSTALL SPLIT:
+#   The packages below are split into two groups:
+#
+#   [A] pip-installable (works on any machine — board, laptop, CI)
+#   [B] Vitis AI TRD image only (pre-installed by the PetaLinux image;
+#       NOT available via pip — do NOT try to pip-install them)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# [A] pip-installable packages
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Computer vision core (DPU pipeline + zone masking + MJPEG encoding)
+# Must be built with GStreamer support on the board (the TRD image provides this)
+opencv-python>=4.5.0
+
+# Numerical arrays — used everywhere (tensor buffers, zone mask, NMS)
+numpy>=1.19.5
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [B] Vitis AI TRD image packages — DO NOT pip install
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#   vart          Vitis AI Runtime — Python bindings for the DPU runner
+#   xir           Xilinx IR — .xmodel graph deserializer and tensor introspection
+#
+# These are C++ extension modules compiled against the ZCU104 PetaLinux image.
+# They are pre-installed at /usr/lib/python3/dist-packages/ on the board.
+# Source: Xilinx Vitis AI TRD 2020.2 image for ZCU104
+#
+# Verify they are present on the board:
+#   python3 -c "import vart, xir; print('OK')"
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# [A] Dev / test dependencies (optional — for running tests on a laptop)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Unit testing framework (used by tests/test_zone_mask.py)
+pytest>=7.0.0

@@ -5,7 +5,14 @@
 # 05: DPU Inference
 
 ## Table of Contents
-- [What is the DPU?](#what-is-the-dpu)- [The YOLOv4 Model](#the-yolov4-model)- [Preprocessing Pipeline](#preprocessing-pipeline)- [Critical Bug Fix: INT8 Type Mismatch](#critical-bug-fix--int8-type-mismatch)- [RTLD_GLOBAL: The Hidden C++ ABI Fix](#rtld_global--the-hidden-c-abi-fix)- [DPU Runner Initialization](#dpu-runner-initialization)- [Output Decoding: Boxes, Scores, NMS](#output-decoding)- [Inference Timing](#inference-timing)
+- [What is the DPU?](#what-is-the-dpu)
+- [The YOLOv4 Model](#the-yolov4-model)
+- [Preprocessing Pipeline](#preprocessing-pipeline)
+- [Critical Bug Fix: INT8 Type Mismatch](#critical-bug-fix--int8-type-mismatch)
+- [RTLD_GLOBAL: The Hidden C++ ABI Fix](#rtld_global--the-hidden-c-abi-fix)
+- [DPU Runner Initialization](#dpu-runner-initialization)
+- [Output Decoding: Boxes, Scores, NMS](#output-decoding)
+- [Inference Timing](#inference-timing)
 ---
 
 ## What is the DPU?

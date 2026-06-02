@@ -5,7 +5,14 @@
 # 02: Hardware Setup
 
 ## Table of Contents
-- [ZCU104 Board Overview](#zcu104-board-overview)- [Required Equipment](#required-equipment)- [Network Configuration](#network-configuration)- [Board Boot and SSH](#board-boot-and-ssh)- [IP Webcam App Setup](#ip-webcam-app-setup)- [Transferring Files to the Board](#transferring-files-to-the-board)- [Downloading the DPU Model](#downloading-the-dpu-model)- [Running Preflight Checks](#running-preflight-checks)
+- [ZCU104 Board Overview](#zcu104-board-overview)
+- [Required Equipment](#required-equipment)
+- [Network Configuration](#network-configuration)
+- [Board Boot and SSH](#board-boot-and-ssh)
+- [IP Webcam App Setup](#ip-webcam-app-setup)
+- [Transferring Files to the Board](#transferring-files-to-the-board)
+- [Downloading the DPU Model](#downloading-the-dpu-model)
+- [Running Preflight Checks](#running-preflight-checks)
 ---
 
 ## ZCU104 Board Overview
@@ -82,9 +89,24 @@ PHONE_HOST = "192.168.2.141:8080"   # ← Change to your phone's IP
 
 ### First Boot
 
-1. Flash the **Vitis AI TRD 2020.2** PetaLinux image to the MicroSD card using Etcher or `dd`
+**Step 0: Download the Vitis AI TRD image**
+
+> [!IMPORTANT]
+> Download the **Vitis AI TRD 2020.2** image for ZCU104 from the official Xilinx release:
+>
+> 🔗 **[Vitis AI TRD 2020.2 — ZCU104 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage.2020.2.img.gz)**
+>
+> File: `petalinux-sdimage.2020.2.img.gz` (~5 GB compressed)  
+> You will need to register a free AMD/Xilinx account to download.
+
+1. Flash the downloaded image to the MicroSD card using **Etcher** (recommended) or `dd`:
+   ```bash
+   # Using Etcher (Windows/Mac/Linux): open the app, select the .img.gz, select the SD card
+   # Using dd (Linux):
+   gunzip -c petalinux-sdimage.2020.2.img.gz | dd of=/dev/sdX bs=4M status=progress
+   ```
 2. Insert the MicroSD card into the ZCU104
-3. Set boot mode switches to SD card boot (SW6: `1110`: check ZCU104 User Guide)
+3. Set boot mode switches to SD card boot (SW6: `1110` — check [ZCU104 User Guide UG1267](https://docs.xilinx.com/r/en-US/ug1267-zcu104-eval-bd) for switch locations)
 4. Connect Ethernet
 5. Connect power: the board boots automatically
 

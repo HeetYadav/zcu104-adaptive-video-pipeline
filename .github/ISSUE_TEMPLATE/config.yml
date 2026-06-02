@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the Troubleshooting Guide first
+    url: https://github.com/HeetYadav/zcu104-adaptive-video-pipeline/blob/main/docs/09_troubleshooting.md
+    about: 10 documented crashes with root causes and fixes — check this before opening an issue.
+  - name: Run preflight.py
+    url: https://github.com/HeetYadav/zcu104-adaptive-video-pipeline/blob/main/tools/preflight/preflight.py
+    about: The preflight checker diagnoses 80% of setup issues automatically. Run it first.

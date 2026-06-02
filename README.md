@@ -131,7 +131,8 @@ Deep dive: [Zone Masking Algorithm →](docs/04_zone_masking_algorithm.md)
 ## Documentation
 
 | Doc | Contents |
-|-----|----------|
+|-----|-----------|
+| [00: Prerequisites](docs/00_prerequisites.md) | FPGA concepts, ZCU104 architecture, DPU, INT8, GStreamer, Python basics |
 | [01: Project Overview](docs/01_project_overview.md) | What, why, hypothesis, results summary |
 | [02: Hardware Setup](docs/02_hardware_setup.md) | ZCU104, IP Webcam, wiring, SCP, SSH |
 | [03: Architecture](docs/03_architecture.md) | System block diagram, thread model, data flow |
@@ -157,6 +158,26 @@ Deep dive: [Zone Masking Algorithm →](docs/04_zone_masking_algorithm.md)
 | **RAM** | 4 GB LPDDR4 |
 | **OS** | PetaLinux (Vitis AI TRD 2020.2 image) |
 | **Camera** | Android phone running IP Webcam app |
+
+---
+
+## What Could You Build Next?
+
+This repo proves the core concept on real silicon. Here are natural extension paths:
+
+| Idea | Complexity | Starting Point |
+|------|-----------|---------------|
+| 🎥 **RTSP output** instead of MJPEG HTTP | Medium | Swap `MjpegServer` for a GStreamer RTSP server sink |
+| 📷 **USB camera** or **RTSP camera** input | Low | Replace the HTTP grabber thread with `cv2.VideoCapture` |
+| 👥 **Multi-camera support** | Medium | Run multiple grabber threads, one per camera |
+| 🧠 **YOLOv8 on DPU** | High | Quantize `yolov8n.onnx` with Vitis AI Quantizer, compile `.xmodel`, swap the detector thread |
+| 📡 **MQTT telemetry** | Low | Publish `[Telemetry]` readings to an MQTT broker for IoT dashboards |
+| 📊 **Live bandwidth dashboard** | Medium | Feed telemetry into a Grafana/InfluxDB stack |
+| 🔒 **H.265 (HEVC) encoding** | Low | Swap `omxh264enc` → `omxh265enc` in `GST_OUT` for even lower bandwidth |
+| 🖥️ **Simulation mode (no board)** | Low | Use `pipelines/pipeline_sim/pipeline_sim.py` — runs on any laptop |
+
+> [!TIP]
+> New to FPGA development? Start with [docs/00_prerequisites.md](docs/00_prerequisites.md) for a 30-minute orientation before diving into the code.
 
 ---
 

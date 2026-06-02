@@ -1,0 +1,84 @@
+name: Bug Report
+description: Something crashed or produced wrong results on the ZCU104
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing a bug**: run `python3 preflight.py` and include its output below.
+        This covers 80% of issues automatically.
+
+  - type: input
+    id: board-os
+    attributes:
+      label: Board OS version
+      description: Output of `cat /etc/os-release` on the ZCU104
+      placeholder: "e.g. PetaLinux 2020.2, Vitis AI TRD 2020.2"
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: Output of `python3 --version` on the board
+      placeholder: "e.g. Python 3.7.4"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: script
+    attributes:
+      label: Which script failed?
+      options:
+        - pipeline_hw.py (Full hardware — DPU + VCU)
+        - pipeline_hw_1.py (Baseline — DPU + MJPEG)
+        - realBenchmark.py (Benchmark runner)
+        - preflight.py (Preflight checker)
+        - pipeline_sim.py (CPU simulation mode)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: preflight-output
+    attributes:
+      label: Preflight output
+      description: Full output of `python3 preflight.py` — copy-paste the entire terminal output
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Full error message
+      description: The complete terminal output including any traceback, DRM log lines, and the crash message
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: network-config
+    attributes:
+      label: Network configuration
+      description: Phone IP, board IP, and any changes made to PHONE_HOST in the pipeline script
+      placeholder: |
+        Phone IP: 192.168.x.xxx:8080
+        Board IP: 192.168.x.xxx
+        PHONE_HOST changed: yes/no
+    validations:
+      required: false
+
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to reproduce
+      description: What exact commands did you run before the crash?
+      placeholder: |
+        1. python3 preflight.py → all pass
+        2. python3 pipeline_hw.py
+        3. Crash after ~30 seconds...
+    validations:
+      required: true

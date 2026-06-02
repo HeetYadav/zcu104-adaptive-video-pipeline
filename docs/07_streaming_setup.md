@@ -5,7 +5,13 @@
 # 07: Streaming Setup
 
 ## Table of Contents
-- [Starting the Pipeline](#starting-the-pipeline)- [Opening in VLC](#opening-in-vlc)- [Opening in a Web Browser](#opening-in-a-web-browser)- [VLC Settings for Low Latency](#vlc-settings-for-low-latency)- [URL Reference](#url-reference)- [What You Should See](#what-you-should-see)- [Stopping the Pipeline](#stopping-the-pipeline)
+- [Starting the Pipeline](#starting-the-pipeline)
+- [Opening in VLC](#opening-in-vlc)
+- [Opening in a Web Browser](#opening-in-a-web-browser)
+- [VLC Settings for Low Latency](#vlc-settings-for-low-latency)
+- [URL Reference](#url-reference)
+- [What You Should See](#what-you-should-see)
+- [Stopping the Pipeline](#stopping-the-pipeline)
 ---
 
 ## Starting the Pipeline

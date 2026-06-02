@@ -5,7 +5,13 @@
 # 06: VCU Hardware Encoding
 
 ## Table of Contents
-- [What is the VCU?](#what-is-the-vcu)- [VBR and the Compression Physics](#vbr-and-the-compression-physics)- [GStreamer Pipeline: Element by Element](#gstreamer-pipeline--element-by-element)- [How OpenCV Drives the VCU](#how-opencv-drives-the-vcu)- [Why We Use fakesink (Telemetry Mode)](#why-we-use-fakesink-telemetry-mode)- [Bandwidth Telemetry Calculation](#bandwidth-telemetry-calculation)- [MJPEG vs H.264: A Direct Comparison](#mjpeg-vs-h264--a-direct-comparison)
+- [What is the VCU?](#what-is-the-vcu)
+- [VBR and the Compression Physics](#vbr-and-the-compression-physics)
+- [GStreamer Pipeline: Element by Element](#gstreamer-pipeline--element-by-element)
+- [How OpenCV Drives the VCU](#how-opencv-drives-the-vcu)
+- [Why We Use fakesink (Telemetry Mode)](#why-we-use-fakesink-telemetry-mode)
+- [Bandwidth Telemetry Calculation](#bandwidth-telemetry-calculation)
+- [MJPEG vs H.264: A Direct Comparison](#mjpeg-vs-h264--a-direct-comparison)
 ---
 
 ## What is the VCU?
