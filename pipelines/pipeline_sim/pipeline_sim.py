@@ -52,15 +52,104 @@ import argparse
 import os
 import sys
 
-# ── Add module paths ──────────────────────────────────────────────
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, os.path.join(_ROOT, 'modules', 'zone_mask'))
-sys.path.insert(0, os.path.join(_ROOT, 'modules', 'adaptive_roi'))
-sys.path.insert(0, os.path.join(_ROOT, 'modules', 'tracker'))
+# ── Pure-Python Reference Implementations ─────────────────────────
+# The original module files on the ZCU104 board use PetaLinux-specific
+# syntax that causes SyntaxError on standard Python.
+# To allow the simulation to run anywhere, we include pure-Python
+# implementations of the core functions here.
 
-from zone_mask import build_zone_mask_multi, draw_zone_overlay_multi
-from adaptive_roi import adaptive_pad
-from tracker import CentroidTracker
+from collections import deque
+
+class CentroidTracker:
+    """Exponential-weighted centroid tracker."""
+    def __init__(self, history: int = 8):
+        self._history = deque(maxlen=history)
+        self._prev_cx = None
+        self._prev_cy = None
+        self.vx = 0.0
+        self.vy = 0.0
+
+    def update(self, cx: float, cy: float) -> None:
+        if self._prev_cx is not None:
+            self.vx = cx - self._prev_cx
+            self.vy = cy - self._prev_cy
+            self._history.append((self.vx, self.vy))
+        self._prev_cx = cx
+        self._prev_cy = cy
+
+    def smooth_velocity(self):
+        if not self._history:
+            return 0.0, 0.0
+        n = len(self._history)
+        weights = np.exp(np.linspace(-1.0, 0.0, n))
+        weights /= weights.sum()
+        vxs = np.array([h[0] for h in self._history])
+        vys = np.array([h[1] for h in self._history])
+        return float(np.dot(weights, vxs)), float(np.dot(weights, vys))
+
+    def predict_next(self):
+        return self.smooth_velocity()
+
+    def reset(self) -> None:
+        self._prev_cx = None
+        self._prev_cy = None
+        self._history.clear()
+        self.vx = 0.0
+        self.vy = 0.0
+
+def adaptive_pad(x, y, w, h, vx, vy, frame_w, frame_h,
+                 base_pad=20, vel_scale=3.0, max_expand=80):
+    """Velocity-aware asymmetric ROI padding."""
+    pad_left   = base_pad + int(min(max(0.0, -vx) * vel_scale, max_expand))
+    pad_right  = base_pad + int(min(max(0.0,  vx) * vel_scale, max_expand))
+    pad_top    = base_pad + int(min(max(0.0, -vy) * vel_scale, max_expand))
+    pad_bottom = base_pad + int(min(max(0.0,  vy) * vel_scale, max_expand))
+    x1 = max(0,       x - pad_left)
+    y1 = max(0,       y - pad_top)
+    x2 = min(frame_w, x + w + pad_right)
+    y2 = min(frame_h, y + h + pad_bottom)
+    return x1, y1, x2 - x1, y2 - y1
+
+def _ring_box(ax, ay, aw, ah, fw, fh, ring_scale=1.6):
+    ring_w = int(aw * ring_scale)
+    ring_h = int(ah * ring_scale)
+    rx = max(0, ax - (ring_w - aw) // 2)
+    ry = max(0, ay - (ring_h - ah) // 2)
+    rx2 = min(fw, rx + ring_w)
+    ry2 = min(fh, ry + ring_h)
+    return rx, ry, rx2 - rx, ry2 - ry
+
+def build_zone_mask_multi(frame, adapted_boxes, ring_scale=1.6, zone2_downsample=0.5):
+    """Multi-target zone composite."""
+    fh, fw = frame.shape[:2]
+    out = np.zeros_like(frame)
+    ring_boxes = []
+    if not adapted_boxes:
+        return frame.copy(), []
+    for (ax, ay, aw, ah) in adapted_boxes:
+        rx, ry, rw, rh = _ring_box(ax, ay, aw, ah, fw, fh, ring_scale)
+        ring_boxes.append((rx, ry, rw, rh))
+        z2_src = frame[ry:ry+rh, rx:rx+rw]
+        if z2_src.size == 0:
+            continue
+        sw = max(1, int(z2_src.shape[1] * zone2_downsample))
+        sh = max(1, int(z2_src.shape[0] * zone2_downsample))
+        small = cv2.resize(z2_src, (sw, sh), interpolation=cv2.INTER_AREA)
+        z2_up = cv2.resize(small, (z2_src.shape[1], z2_src.shape[0]),
+                           interpolation=cv2.INTER_LINEAR)
+        out[ry:ry+rh, rx:rx+rw] = z2_up
+    for (ax, ay, aw, ah) in adapted_boxes:
+        out[ay:ay+ah, ax:ax+aw] = frame[ay:ay+ah, ax:ax+aw]
+    return out, ring_boxes
+
+def draw_zone_overlay_multi(frame, adapted_boxes, ring_boxes):
+    """Draw zone boundaries on frame."""
+    for i, (ax, ay, aw, ah) in enumerate(adapted_boxes):
+        cv2.rectangle(frame, (ax, ay), (ax+aw, ay+ah), (0, 220, 80), 2)
+        if i < len(ring_boxes):
+            rx, ry, rw, rh = ring_boxes[i]
+            cv2.rectangle(frame, (rx, ry), (rx+rw, ry+rh), (0, 180, 255), 1)
+    return frame
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -88,7 +177,7 @@ Download weights:
   Tiny:  https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
         """
     )
-    p.add_argument('--input',   required=True,
+    p.add_argument('--input',   required=False, default=None,
                    help='Video source: file path, webcam index (0), or RTSP URL')
     p.add_argument('--output',  default=None,
                    help='Optional: save output to this video file (e.g. out.mp4)')
@@ -420,6 +509,16 @@ def display_thread(video_writer):
 
 def main():
     args = parse_args()
+    
+    if args.input is None:
+        print("\n[INFO] No --input video source provided.")
+        val = input("Do you want to use the laptop camera (webcam)? [Y/n]: ").strip().lower()
+        if val in ('', 'y', 'yes'):
+            args.input = '0'
+        else:
+            print("Please provide a video source using --input. Exiting.")
+            sys.exit(1)
+            
     net, output_layers = load_yolo(args)
 
     # Optional video output writer
