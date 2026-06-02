@@ -2,9 +2,9 @@
 
 ---
 
-# `pipeline_sim/` — CPU-Only Simulation Pipeline
+# `pipeline_sim/` (CPU-Only Simulation Pipeline)
 
-Run the complete ZCU104 ROI bandwidth management algorithm **on any laptop** — no FPGA, no ZCU104, no PetaLinux required.
+Run the complete ZCU104 ROI bandwidth management algorithm **on any laptop** without needing an FPGA, ZCU104, or PetaLinux.
 
 This pipeline mirrors `pipeline_hw.py`'s 4-thread architecture exactly, replacing:
 
@@ -31,7 +31,7 @@ pip install opencv-python numpy
 
 You need YOLOv4 `.cfg` and `.weights` files. Place them in the **repo root** (same directory as `README.md`).
 
-### Option A: YOLOv4-Tiny (Recommended for CPU — faster)
+### Option A: YOLOv4-Tiny (Recommended for CPU, runs faster)
 
 ```bash
 # .cfg (already included in the repo root)
@@ -79,7 +79,7 @@ python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --full
 # Save output to a file
 python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --output result.mp4
 
-# Headless (no display window — for servers)
+# Headless (no display window, useful for servers)
 python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --no-display
 ```
 
@@ -103,10 +103,10 @@ python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --no-display
 
 An OpenCV window showing the 3-zone composited output:
 
-- **Black background** — Zone 3: pure zero pixels (near-zero bits in H.264 VBR)
-- **Green rectangle** labeled `Z1` — Zone 1: full-resolution ROI around each person
-- **Dashed amber rectangle** labeled `Z2` — Zone 2: 50%-downsampled proximity ring
-- **"CPU SIM — No FPGA" watermark** — visual reminder this is simulation mode
+- **Black background**: Zone 3, pure zero pixels (near-zero bits in H.264 VBR)
+- **Green rectangle** labeled `Z1`: Zone 1, full-resolution ROI around each person
+- **Dashed amber rectangle** labeled `Z2`: Zone 2, 50%-downsampled proximity ring
+- **"CPU SIM: No FPGA" watermark**: A visual reminder that this is simulation mode
 
 Terminal telemetry every 30 frames:
 
@@ -116,7 +116,7 @@ Terminal telemetry every 30 frames:
     [Telemetry] frame=    60 | targets=2 | BW:  241.7 kbps ( 7.5 FPS)  [CPU sim]
 ```
 
-The bandwidth figure uses the **same active-pixel-ratio model** as `pipeline_hw.py` — it represents what the VCU hardware H.264 encoder would produce for that scene.
+The bandwidth figure uses the **same active-pixel-ratio model** as `pipeline_hw.py`, meaning it represents what the VCU hardware H.264 encoder would produce for that scene.
 
 ---
 
