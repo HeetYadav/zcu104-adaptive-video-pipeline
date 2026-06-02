@@ -52,7 +52,7 @@ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optim
 ```
 
 > [!TIP]
-> For learning the algorithm, start with YOLOv4-Tiny (`--tiny` flag). It runs at 5–15 FPS on a laptop CPU vs. 0.5–2 FPS for full YOLOv4.
+> YOLOv4-Tiny is used by default because it runs much faster on CPU (5–15 FPS). If you want higher accuracy, use the `--full` flag (0.5–2 FPS).
 
 ---
 
@@ -61,33 +61,36 @@ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optim
 ```bash
 # Run from the repo root:
 
-# Video file (recommended for first run)
-python3 pipelines/pipeline_sim/pipeline_sim.py --input path/to/video.mp4 --tiny
+# Quick start with your laptop webcam (interactive prompt)
+python3 pipelines/pipeline_sim/pipeline_sim.py
 
-# Webcam (device 0)
-python3 pipelines/pipeline_sim/pipeline_sim.py --input 0 --tiny
+# Video file
+python3 pipelines/pipeline_sim/pipeline_sim.py --input path/to/video.mp4
+
+# Webcam directly (device 0)
+python3 pipelines/pipeline_sim/pipeline_sim.py --input 0
 
 # RTSP stream
-python3 pipelines/pipeline_sim/pipeline_sim.py --input rtsp://192.168.1.100/stream --tiny
+python3 pipelines/pipeline_sim/pipeline_sim.py --input rtsp://192.168.1.100/stream
 
 # Full YOLOv4 (slower but more accurate)
-python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4
+python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --full
 
 # Save output to a file
-python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --tiny --output result.mp4
+python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --output result.mp4
 
 # Headless (no display window — for servers)
-python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --tiny --no-display
+python3 pipelines/pipeline_sim/pipeline_sim.py --input video.mp4 --no-display
 ```
 
 ### All Options
 
 ```
---input         Video source: file path, webcam index (0), or RTSP URL  [required]
+--input         Video source: file path, webcam index (0), or URL [optional, prompts for webcam if omitted]
 --output        Save composited output to this video file
 --conf          Detection confidence threshold (default: 0.30)
 --nms           NMS IoU threshold (default: 0.40)
---tiny          Use YOLOv4-Tiny weights (faster on CPU)
+--full          Use full YOLOv4 weights (slower on CPU) instead of YOLOv4-Tiny
 --cfg           Path to custom .cfg file
 --weights       Path to custom .weights file
 --max-targets   Maximum simultaneous persons to track (default: 5)

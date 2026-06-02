@@ -185,12 +185,12 @@ Download weights:
                    help='Detection confidence threshold (default: 0.30)')
     p.add_argument('--nms',     type=float, default=0.40,
                    help='NMS IoU threshold (default: 0.40)')
-    p.add_argument('--tiny',    action='store_true',
-                   help='Use YOLOv4-Tiny weights (faster on CPU)')
+    p.add_argument('--full',    action='store_true',
+                   help='Use full YOLOv4 weights (slower on CPU) instead of YOLOv4-Tiny')
     p.add_argument('--cfg',     default=None,
-                   help='Path to YOLOv4 .cfg file (auto-detected if not set)')
+                   help='Path to custom .cfg file (auto-detected if not set)')
     p.add_argument('--weights', default=None,
-                   help='Path to YOLOv4 .weights file (auto-detected if not set)')
+                   help='Path to custom .weights file (auto-detected if not set)')
     p.add_argument('--max-targets', type=int, default=5,
                    help='Maximum number of simultaneous persons to track (default: 5)')
     p.add_argument('--no-display', action='store_true',
@@ -207,7 +207,7 @@ def load_yolo(args):
     # Auto-detect model files from repo root
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-    if args.tiny:
+    if not args.full:
         cfg_default     = os.path.join(root, 'yolov4-tiny.cfg')
         weights_default = os.path.join(root, 'yolov4-tiny.weights')
         label = 'YOLOv4-Tiny'
@@ -221,12 +221,12 @@ def load_yolo(args):
 
     if not os.path.exists(cfg):
         print(f"[ERROR] Config file not found: {cfg}")
-        print(f"        Download: https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov4{'tiny' if args.tiny else ''}.cfg")
+        print(f"        Download: https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov4{'' if args.full else '-tiny'}.cfg")
         sys.exit(1)
 
     if not os.path.exists(weights):
         print(f"[ERROR] Weights file not found: {weights}")
-        if args.tiny:
+        if not args.full:
             print("        Download: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights")
         else:
             print("        Download: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights")
@@ -531,7 +531,7 @@ def main():
     print("=" * 60)
     print("  ZCU104 ROI Pipeline  [CPU Simulation Mode]")
     print(f"  Input source : {args.input}")
-    print(f"  Model        : {'YOLOv4-Tiny' if args.tiny else 'YOLOv4'} (CPU)")
+    print(f"  Model        : {'YOLOv4' if args.full else 'YOLOv4-Tiny'} (CPU)")
     print(f"  Conf thresh  : {args.conf}")
     print(f"  Max targets  : {args.max_targets}")
     print("  Press Q in the video window to stop.")
