@@ -9,12 +9,11 @@ Utility scripts for setup, verification, and benchmarking. These are **not part 
 | Tool | Folder | Purpose |
 |------|--------|---------|
 | [`preflight/`](preflight/) | `preflight.py` | Pre-run hardware check: verifies all dependencies before starting a pipeline |
-| [`benchmark/`](benchmark/) | `benchmark.py`, `realBenchmark.py` | Hardware performance measurement and automated pipeline comparison |
+| [`benchmark/`](benchmark/) | `realBenchmark.py` | Hardware performance measurement and automated pipeline comparison |
 
 ## Recommended Workflow
 
 ```
 1. Run preflight.py          → confirm hardware is ready
 2. Run realBenchmark.py      → measure MJPEG vs H.264 bandwidth
-3. Run benchmark.py          → measure DPU vs CPU inference speed
 ```

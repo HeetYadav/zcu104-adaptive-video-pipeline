@@ -120,7 +120,6 @@ Deep dive: [Zone Masking Algorithm →](docs/04_zone_masking_algorithm.md)
 | `adaptive_roi.py` | Motion-predictive ROI padding: expands bounding box asymmetrically in the direction of travel |
 | `tracker.py` | `CentroidTracker`: exponential-weighted velocity smoothing over 8-frame history |
 | `realBenchmark.py` | Automated benchmark runner: starts each pipeline, simulates a VLC client, collects telemetry |
-| `benchmark.py` | Detailed offline benchmark analysis and visualization |
 | `telemetry.py` | Bandwidth telemetry helpers used by the pipelines |
 | `preflight.py` | Hardware preflight checker: run before `pipeline_hw.py` to verify all dependencies |
 | `export_yolo.py` | YOLOv4 model export utility |
